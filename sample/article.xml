@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article id="sample-doc">
+    <title>Introduction to XML Authoring</title>
+
+    <section id="introduction">
+        <heading>What is XML Authoring?</heading>
+
+        <paragraph>
+            XML authoring is the process of creating and editing structured content
+            using <bold>Extensible Markup Language</bold>. Unlike word processors,
+            XML authoring tools enforce <italic>semantic structure</italic> rather
+            than visual formatting.
+        </paragraph>
+
+        <paragraph>
+            This tool demonstrates a <underline>professional authoring workflow</underline>
+            where the document always flows through a canonical internal model.
+        </paragraph>
+
+        <paragraph>
+            Learn more at <link href="https://www.w3.org/XML/">the W3C XML specification</link>.
+        </paragraph>
+    </section>
+
+    <section id="features">
+        <heading>Key Features</heading>
+
+        <paragraph>
+            The following features are supported in this MVP release:
+        </paragraph>
+
+        <bullet-list>
+            <list-item>
+                <paragraph><bold>Upload</bold> any valid article XML file</paragraph>
+            </list-item>
+            <list-item>
+                <paragraph><italic>Validate</italic> the document structure automatically</paragraph>
+            </list-item>
+            <list-item>
+                <paragraph>Edit content with <underline>rich text formatting</underline></paragraph>
+            </list-item>
+            <list-item>
+                <paragraph>Download the updated XML with preserved structure</paragraph>
+            </list-item>
+        </bullet-list>
+    </section>
+
+    <section id="workflow">
+        <heading level="2">Authoring Workflow</heading>
+
+        <paragraph>
+            The application follows a strict layered architecture:
+        </paragraph>
+
+        <ordered-list>
+            <list-item>
+                <paragraph>Parse XML with fast-xml-parser</paragraph>
+            </list-item>
+            <list-item>
+                <paragraph>Validate structure against the supported vocabulary</paragraph>
+            </list-item>
+            <list-item>
+                <paragraph>Convert to the <bold>Internal Document Model</bold></paragraph>
+            </list-item>
+            <list-item>
+                <paragraph>Render in the Tiptap rich-text editor</paragraph>
+            </list-item>
+            <list-item>
+                <paragraph>Synchronize edits back to the Internal Document Model</paragraph>
+            </list-item>
+            <list-item>
+                <paragraph>Serialize to clean, well-formed XML on download</paragraph>
+            </list-item>
+        </ordered-list>
+
+        <section id="nested-example">
+            <heading level="3">A Note on Nested Sections</heading>
+
+            <paragraph>
+                Sections can be nested to arbitrary depth. Each section creates a
+                logical grouping with a visual left-border indicator in the editor.
+            </paragraph>
+        </section>
+    </section>
+
+    <section id="formatting">
+        <heading>Inline Formatting</heading>
+
+        <paragraph>
+            You can use <bold>bold</bold>, <italic>italic</italic>,
+            <underline>underline</underline>, and
+            <link href="https://tiptap.dev">links</link> inline.
+        </paragraph>
+
+        <paragraph>
+            Formatting can be <bold><italic>combined</italic></bold> for
+            emphasis when needed.
+        </paragraph>
+    </section>
+</article>

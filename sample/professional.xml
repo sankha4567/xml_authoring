@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article id="xml-authoring-demo" version="1.0">
+
+    <title>Introduction to Modern Software Engineering</title>
+
+    <section id="introduction">
+        <heading>Introduction</heading>
+
+        <paragraph>
+            Software engineering is the process of designing, developing,
+            testing, and maintaining reliable software systems.
+        </paragraph>
+
+        <paragraph>
+            Modern applications require
+            <bold>clean architecture</bold>,
+            <italic>maintainable code</italic>,
+            and <underline>well-defined requirements</underline>.
+        </paragraph>
+
+        <paragraph>
+            Developers can learn more about software engineering at
+            <link href="https://www.example.com" target="_blank">
+                Example Website
+            </link>.
+        </paragraph>
+    </section>
+
+    <section id="principles">
+        <heading>Core Principles</heading>
+
+        <paragraph>
+            Good software engineering follows several important principles.
+        </paragraph>
+
+        <bullet-list>
+            <list-item>
+                <paragraph>Keep the architecture modular.</paragraph>
+            </list-item>
+
+            <list-item>
+                <paragraph>Write readable and maintainable code.</paragraph>
+            </list-item>
+
+            <list-item>
+                <paragraph>Test important application behavior.</paragraph>
+            </list-item>
+
+            <list-item>
+                <paragraph>Separate business logic from presentation logic.</paragraph>
+            </list-item>
+        </bullet-list>
+    </section>
+
+    <section id="development-process">
+        <heading>Development Process</heading>
+
+        <paragraph>
+            A typical software development process can be divided into
+            several stages.
+        </paragraph>
+
+        <ordered-list>
+            <list-item>
+                <paragraph>Understand the requirements.</paragraph>
+            </list-item>
+
+            <list-item>
+                <paragraph>Design the system architecture.</paragraph>
+            </list-item>
+
+            <list-item>
+                <paragraph>Implement the required features.</paragraph>
+            </list-item>
+
+            <list-item>
+                <paragraph>Test the implementation.</paragraph>
+            </list-item>
+
+            <list-item>
+                <paragraph>Deploy and maintain the application.</paragraph>
+            </list-item>
+        </ordered-list>
+
+        <section id="testing">
+            <heading>Testing</heading>
+
+            <paragraph>
+                Testing helps identify defects before software reaches
+                production.
+            </paragraph>
+
+            <paragraph>
+                Automated tests can verify that important transformations
+                continue to work correctly after future changes.
+            </paragraph>
+        </section>
+    </section>
+
+    <section id="architecture">
+        <heading>Application Architecture</heading>
+
+        <paragraph>
+            A well-designed application separates its domain model from
+            external frameworks and presentation technologies.
+        </paragraph>
+
+        <paragraph>
+            In this XML authoring application, the
+            <bold>Internal Document Model</bold>
+            is the canonical representation of the document.
+        </paragraph>
+
+        <bullet-list>
+            <list-item>
+                <paragraph>XML is used as an input and output format.</paragraph>
+            </list-item>
+
+            <list-item>
+            
+                <paragraph>Tiptap is used as the visual editing layer.</paragraph>
+            </list-item>
+
+            <list-item>
+                <paragraph>The Internal Document Model represents document semantics.</paragraph>
+            </list-item>
+
+            <list-item>
+                <paragraph>The XML serializer generates the final XML document.</paragraph>
+            </list-item>
+        </bullet-list>
+    </section>
+
+    <section id="conclusion">
+        <heading>Conclusion</heading>
+
+        <paragraph>
+            Separating the document model from the editor makes the
+            application easier to maintain and extend.
+        </paragraph>
+
+        <paragraph>
+            The same document model can later be used to generate
+            <bold>XML</bold>, DOCX, and PDF documents.
+        </paragraph>
+    </section>
+
+</article>
