@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book>
+  <metadata>
+    <isbn>978-3-16-148410-0</isbn>
+    <publisher>TechPress International</publisher>
+    <year>2024</year>
+    <edition>3</edition>
+  </metadata>
+
+  <chapter number="1">
+    <title>Introduction to Cloud Computing</title>
+    <summary>An overview of cloud computing concepts, service models, and deployment strategies used in modern enterprise environments.</summary>
+
+    <section>
+      <heading>What is Cloud Computing?</heading>
+      <paragraph>Cloud computing is the delivery of computing services including servers, storage, databases, networking, software, and analytics over the internet.</paragraph>
+      <paragraph>It enables faster innovation, flexible resources, and economies of scale. Organizations typically pay only for the cloud services they use.</paragraph>
+    </section>
+
+    <section>
+      <heading>Service Models</heading>
+      <paragraph>There are three primary service models in cloud computing that every architect must understand before designing solutions.</paragraph>
+
+      <subsection>
+        <heading>Infrastructure as a Service (IaaS)</heading>
+        <paragraph>IaaS provides virtualized computing resources over the internet. It is the most flexible cloud computing model, giving users full control over their infrastructure.</paragraph>
+        <example>Amazon EC2, Microsoft Azure VMs, Google Compute Engine</example>
+      </subsection>
+
+      <subsection>
+        <heading>Platform as a Service (PaaS)</heading>
+        <paragraph>PaaS delivers hardware and software tools over the internet, typically for application development. The provider hosts the hardware and software.</paragraph>
+        <example>Google App Engine, Heroku, Microsoft Azure App Service</example>
+      </subsection>
+
+      <subsection>
+        <heading>Software as a Service (SaaS)</heading>
+        <paragraph>SaaS delivers software applications over the internet, on demand, and typically on a subscription basis.</paragraph>
+        <example>Google Workspace, Microsoft 365, Salesforce</example>
+      </subsection>
+    </section>
+
+    <section>
+      <heading>Deployment Models</heading>
+      <paragraph>Organizations choose from four primary deployment models based on their security, compliance, and operational needs.</paragraph>
+      <note>The choice of deployment model significantly impacts cost, security posture, and operational complexity.</note>
+    </section>
+  </chapter>
+
+  <chapter number="2">
+    <title>Security in the Cloud</title>
+    <summary>Comprehensive guide to securing cloud environments, covering identity management, encryption, and compliance frameworks.</summary>
+
+    <section>
+      <heading>Shared Responsibility Model</heading>
+      <paragraph>Security in the cloud is a shared responsibility between the cloud provider and the customer. Understanding this boundary is critical.</paragraph>
+      <warning>Misunderstanding the shared responsibility model is one of the leading causes of cloud security breaches.</warning>
+    </section>
+
+    <section>
+      <heading>Identity and Access Management</heading>
+      <paragraph>IAM is the foundation of cloud security. Proper configuration of IAM policies prevents unauthorized access and privilege escalation.</paragraph>
+
+      <subsection>
+        <heading>Principle of Least Privilege</heading>
+        <paragraph>Every user, service, and application should have only the minimum permissions required to perform its function. Excess permissions are a liability.</paragraph>
+      </subsection>
+    </section>
+  </chapter>
+</book>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<user-manual product="NovaCam Pro X700" version="2.3" language="en">
+  <cover>
+    <product-name>NovaCam Pro X700</product-name>
+    <tagline>Professional Mirrorless Camera System</tagline>
+    <document-type>User Manual and Reference Guide</document-type>
+    <support-url>https://support.novacam.com/x700</support-url>
+  </cover>
+
+  <safety-information>
+    <danger>Never expose the camera to rain, moisture, or submersion in water. Doing so may cause electric shock or fire.</danger>
+    <warning>Keep memory cards, batteries, and small accessories away from children. Swallowing may cause serious injury.</warning>
+    <caution>Avoid pointing the lens directly at the sun or strong light sources. Permanent sensor damage may result.</caution>
+    <note>Always use the included wrist strap when shooting in environments where the camera could be dropped.</note>
+  </safety-information>
+
+  <chapter id="getting-started">
+    <chapter-title>Chapter 1: Getting Started</chapter-title>
+
+    <section>
+      <section-title>Package Contents</section-title>
+      <paragraph>Your NovaCam Pro X700 package includes the following items. Contact your retailer if any items are missing or damaged.</paragraph>
+      <item>NovaCam Pro X700 camera body</item>
+      <item>NV-LP45 rechargeable lithium-ion battery</item>
+      <item>BC-80 battery charger with AC adapter</item>
+      <item>USB-C cable (1.5m)</item>
+      <item>Body cap and rear lens cap</item>
+      <item>Camera strap</item>
+      <item>This user manual</item>
+    </section>
+
+    <section>
+      <section-title>Understanding the Camera Body</section-title>
+      <paragraph>Familiarize yourself with the physical controls and ports before operating the camera for the first time.</paragraph>
+
+      <subsection>
+        <subsection-title>Top Panel Controls</subsection-title>
+        <paragraph>The top panel houses the primary shooting controls designed for quick adjustment without removing the camera from your eye.</paragraph>
+        <control name="Mode Dial">Selects the shooting mode. Rotate to switch between P, A, S, M, Auto, and custom modes.</control>
+        <control name="Shutter Button">Half-press to focus and meter exposure. Full press captures the image.</control>
+        <control name="Exposure Compensation Dial">Adjust from -5 to +5 EV in 1/3 stop increments.</control>
+        <control name="ISO Dial">Direct ISO control from 64 to 102400, plus Auto ISO.</control>
+      </subsection>
+
+      <subsection>
+        <subsection-title>Rear Panel Controls</subsection-title>
+        <paragraph>The rear panel provides access to playback, menu navigation, and secondary shooting controls.</paragraph>
+        <control name="MENU Button">Opens the camera's settings menu hierarchy.</control>
+        <control name="PLAY Button">Enters image playback mode.</control>
+        <control name="AF-ON Button">Activates autofocus independently of the shutter button (Back-button AF).</control>
+        <control name="Multi-selector">Navigate menus and images using the directional pad.</control>
+      </subsection>
+    </section>
+
+    <section>
+      <section-title>Inserting the Battery and Memory Card</section-title>
+      <step number="1">Ensure the camera is powered off before opening the battery and card compartment door.</step>
+      <step number="2">Slide the compartment door lock to the OPEN position and open the door.</step>
+      <step number="3">Insert the battery with the contacts facing inward. Push until the battery latch clicks into place.</step>
+      <step number="4">Insert the CFexpress or SD memory card in the appropriate slot. The card is correctly inserted when it clicks.</step>
+      <step number="5">Close the compartment door and slide the lock to the CLOSED position.</step>
+      <caution>Never force the battery or memory card into the slot. Incorrect insertion may damage contacts.</caution>
+    </section>
+  </chapter>
+
+  <chapter id="shooting-modes">
+    <chapter-title>Chapter 2: Shooting Modes</chapter-title>
+
+    <section>
+      <section-title>Program Auto (P)</section-title>
+      <paragraph>In Program Auto mode, the camera automatically selects the optimal shutter speed and aperture combination based on the metered exposure. You retain control over ISO, white balance, and other parameters.</paragraph>
+      <tip>Use Program Shift to rotate the command dial and select alternative equivalent exposure combinations while maintaining correct exposure.</tip>
+    </section>
+
+    <section>
+      <section-title>Aperture Priority (A)</section-title>
+      <paragraph>You set the aperture and the camera automatically calculates the correct shutter speed. This mode is ideal for controlling depth of field.</paragraph>
+      <paragraph>A wide aperture (low f-number like f/1.8) produces a shallow depth of field with blurred backgrounds, ideal for portraits. A narrow aperture (high f-number like f/16) keeps more of the scene in sharp focus, ideal for landscapes.</paragraph>
+    </section>
+
+    <section>
+      <section-title>Shutter Priority (S)</section-title>
+      <paragraph>You set the shutter speed and the camera calculates the correct aperture. Use fast shutter speeds (1/1000s or faster) to freeze motion and slow shutter speeds (1/30s or slower) for motion blur and light trails.</paragraph>
+      <warning>At very slow shutter speeds without a tripod, camera shake will cause blurred images.</warning>
+    </section>
+
+    <section>
+      <section-title>Manual (M)</section-title>
+      <paragraph>Full manual control over both aperture and shutter speed. The exposure meter in the viewfinder shows whether your current settings will result in correct, over, or underexposed images.</paragraph>
+      <paragraph>Manual mode is preferred by professionals for studio photography, video production, and any situation where consistent exposure across multiple frames is required.</paragraph>
+    </section>
+  </chapter>
+
+  <chapter id="troubleshooting">
+    <chapter-title>Chapter 5: Troubleshooting</chapter-title>
+
+    <problem>
+      <symptom>Camera does not turn on</symptom>
+      <cause>Battery is depleted or not inserted correctly</cause>
+      <solution>Charge the battery using the included charger. Ensure the battery is seated correctly with the latch clicked into place.</solution>
+    </problem>
+
+    <problem>
+      <symptom>Images appear blurry</symptom>
+      <cause>Camera shake at slow shutter speeds, or subject is out of focus</cause>
+      <solution>Use a faster shutter speed, enable image stabilization, or use a tripod. Verify the correct AF point is selected on your subject.</solution>
+    </problem>
+
+    <problem>
+      <symptom>Memory card not recognized</symptom>
+      <cause>Card is not inserted correctly, is damaged, or is an unsupported format</cause>
+      <solution>Remove and reinsert the card. Format the card in-camera if it was previously used in another device. Use a CFexpress Type B or UHS-II SD card.</solution>
+    </problem>
+  </chapter>
+</user-manual>

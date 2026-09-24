@@ -1,16 +1,21 @@
 /**
  * Application State
  *
- * Simple React state management — no Redux, no Zustand.
+ * Holds the Generic AST, discovered + sanitized schema, bidirectional tag maps,
+ * and editor readiness state.
  */
 
 import { useState, useCallback } from 'react';
-import type { DocumentModel } from '../document-model/types';
+import type { XmlElement } from '../document-model/GenericAst';
+import type { SanitizedTag } from '../editor/schema/SchemaSanitizer';
 
 export type ValidationState = 'idle' | 'valid' | 'error';
 
 export interface AppState {
-  currentDocumentModel: DocumentModel | null;
+  currentDocumentAst: XmlElement | null;
+  discoveredSchema: SanitizedTag[] | null;
+  tagToPm: Map<string, string> | null;    // xmlTag  → pmName
+  pmToTag: Map<string, string> | null;    // pmName  → xmlTag
   fileName: string | null;
   validationState: ValidationState;
   errorMessages: string[];
@@ -18,14 +23,23 @@ export interface AppState {
 }
 
 export interface AppActions {
-  setDocumentModel: (model: DocumentModel, fileName: string) => void;
+  setDocumentData: (
+    ast: XmlElement,
+    schema: SanitizedTag[],
+    tagToPm: Map<string, string>,
+    pmToTag: Map<string, string>,
+    fileName: string
+  ) => void;
+  updateDocumentAst: (ast: XmlElement) => void;
   setValidationError: (messages: string[]) => void;
-  setEditorReady: (ready: boolean) => void;
   reset: () => void;
 }
 
 const INITIAL_STATE: AppState = {
-  currentDocumentModel: null,
+  currentDocumentAst: null,
+  discoveredSchema: null,
+  tagToPm: null,
+  pmToTag: null,
   fileName: null,
   validationState: 'idle',
   errorMessages: [],
@@ -35,10 +49,19 @@ const INITIAL_STATE: AppState = {
 export function useDocumentState(): [AppState, AppActions] {
   const [state, setState] = useState<AppState>(INITIAL_STATE);
 
-  const setDocumentModel = useCallback(
-    (model: DocumentModel, fileName: string) => {
+  const setDocumentData = useCallback(
+    (
+      ast: XmlElement,
+      schema: SanitizedTag[],
+      tagToPm: Map<string, string>,
+      pmToTag: Map<string, string>,
+      fileName: string
+    ) => {
       setState({
-        currentDocumentModel: model,
+        currentDocumentAst: ast,
+        discoveredSchema: schema,
+        tagToPm,
+        pmToTag,
         fileName,
         validationState: 'valid',
         errorMessages: [],
@@ -48,8 +71,12 @@ export function useDocumentState(): [AppState, AppActions] {
     []
   );
 
+  const updateDocumentAst = useCallback((ast: XmlElement) => {
+    setState(prev => ({ ...prev, currentDocumentAst: ast }));
+  }, []);
+
   const setValidationError = useCallback((messages: string[]) => {
-    setState((prev) => ({
+    setState(prev => ({
       ...prev,
       validationState: 'error',
       errorMessages: messages,
@@ -57,20 +84,7 @@ export function useDocumentState(): [AppState, AppActions] {
     }));
   }, []);
 
-  const setEditorReady = useCallback((ready: boolean) => {
-    setState((prev) => ({ ...prev, editorReady: ready }));
-  }, []);
+  const reset = useCallback(() => setState(INITIAL_STATE), []);
 
-  const reset = useCallback(() => {
-    setState(INITIAL_STATE);
-  }, []);
-
-  const actions: AppActions = {
-    setDocumentModel,
-    setValidationError,
-    setEditorReady,
-    reset,
-  };
-
-  return [state, actions];
+  return [state, { setDocumentData, updateDocumentAst, setValidationError, reset }];
 }

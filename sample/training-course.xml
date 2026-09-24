@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<training-course id="DEVOPS-401" level="advanced">
+  <course-info>
+    <title>Enterprise DevOps and Platform Engineering</title>
+    <duration>40 hours</duration>
+    <format>Instructor-led with hands-on labs</format>
+    <prerequisites>
+      <prerequisite>Linux system administration fundamentals</prerequisite>
+      <prerequisite>Basic understanding of containerization (Docker)</prerequisite>
+      <prerequisite>Experience with at least one scripting language (Python or Bash)</prerequisite>
+    </prerequisites>
+    <learning-objectives>
+      <objective>Design and implement CI/CD pipelines for enterprise-scale applications</objective>
+      <objective>Deploy and manage Kubernetes clusters in production environments</objective>
+      <objective>Implement GitOps workflows using ArgoCD and Flux</objective>
+      <objective>Monitor and observe distributed systems with Prometheus and Grafana</objective>
+    </learning-objectives>
+  </course-info>
+
+  <module number="1">
+    <module-title>DevOps Culture and Principles</module-title>
+    <duration>4 hours</duration>
+    <description>Establish a deep understanding of DevOps philosophy before diving into tools and practices.</description>
+
+    <lesson number="1.1">
+      <lesson-title>The Three Ways of DevOps</lesson-title>
+      <duration>60 minutes</duration>
+      <content>The Three Ways represent the values and philosophies from which DevOps patterns and practices derive. Understanding these principles is essential for cultural transformation.</content>
+
+      <topic>
+        <topic-title>The First Way: Systems Thinking</topic-title>
+        <explanation>Focus on the overall performance of the system, not just a specific team or department. Optimize for global outcomes rather than local efficiencies that create bottlenecks elsewhere.</explanation>
+      </topic>
+
+      <topic>
+        <topic-title>The Second Way: Amplify Feedback Loops</topic-title>
+        <explanation>Create shorter and amplified feedback loops to prevent problems from propagating downstream and to enable faster detection and correction of defects.</explanation>
+      </topic>
+
+      <topic>
+        <topic-title>The Third Way: Culture of Continual Experimentation</topic-title>
+        <explanation>Foster a culture that supports taking risks and learning from failure, and understands that repetition and practice are prerequisites to mastery.</explanation>
+      </topic>
+
+      <lab>
+        <lab-title>Value Stream Mapping Exercise</lab-title>
+        <duration>30 minutes</duration>
+        <objective>Map the current software delivery process to identify waste, bottlenecks, and improvement opportunities.</objective>
+      </lab>
+    </lesson>
+
+    <lesson number="1.2">
+      <lesson-title>DORA Metrics and Measuring DevOps Performance</lesson-title>
+      <duration>45 minutes</duration>
+      <content>The DORA (DevOps Research and Assessment) metrics provide an evidence-based framework for measuring software delivery performance and organizational health.</content>
+
+      <metric name="Deployment Frequency">
+        <description>How often an organization successfully releases to production. Elite performers deploy on-demand, multiple times per day.</description>
+        <measurement>Count of successful production deployments per time period.</measurement>
+      </metric>
+
+      <metric name="Lead Time for Changes">
+        <description>Time from code commit to code running in production. Elite teams achieve less than one hour.</description>
+        <measurement>Median time from first commit to production deployment.</measurement>
+      </metric>
+
+      <metric name="Mean Time to Restore">
+        <description>How long it takes to restore service after an incident. Elite teams restore service in less than one hour.</description>
+        <measurement>Median time from incident detection to full service restoration.</measurement>
+      </metric>
+
+      <metric name="Change Failure Rate">
+        <description>Percentage of deployments that cause a production failure requiring remediation.</description>
+        <measurement>Failed deployments divided by total deployments, expressed as percentage.</measurement>
+      </metric>
+    </lesson>
+  </module>
+
+  <module number="2">
+    <module-title>Kubernetes in Production</module-title>
+    <duration>12 hours</duration>
+    <description>Deep dive into Kubernetes architecture, advanced workload patterns, and production hardening techniques.</description>
+
+    <lesson number="2.1">
+      <lesson-title>Kubernetes Architecture Deep Dive</lesson-title>
+      <duration>90 minutes</duration>
+      <content>Understanding the internals of Kubernetes is critical for diagnosing production issues and making informed architectural decisions.</content>
+
+      <topic>
+        <topic-title>Control Plane Components</topic-title>
+        <explanation>The control plane manages the state of the cluster. It consists of the API Server, etcd, Controller Manager, and Scheduler. Each component has distinct responsibilities and failure modes.</explanation>
+      </topic>
+
+      <topic>
+        <topic-title>Node Components</topic-title>
+        <explanation>Each node runs the kubelet (responsible for pod lifecycle), kube-proxy (handles network rules), and a container runtime such as containerd or CRI-O.</explanation>
+      </topic>
+
+      <lab>
+        <lab-title>Cluster Autopsy: Diagnosing Control Plane Failures</lab-title>
+        <duration>60 minutes</duration>
+        <objective>Practice diagnosing and recovering from simulated control plane component failures in a provided lab environment.</objective>
+        <tool>kubectl, etcdctl, journalctl</tool>
+      </lab>
+    </lesson>
+
+    <lesson number="2.2">
+      <lesson-title>Resource Management and Pod Scheduling</lesson-title>
+      <duration>60 minutes</duration>
+      <content>Proper resource requests and limits are foundational to cluster stability and fair resource allocation across teams and workloads.</content>
+
+      <important-concept>
+        <concept-title>Requests vs Limits</concept-title>
+        <explanation>Resource requests define the minimum resources guaranteed to a container and are used by the scheduler for placement decisions. Limits define the maximum a container can consume and are enforced by the kubelet.</explanation>
+      </important-concept>
+
+      <warning>Setting resource limits without appropriate requests can lead to unexpected pod evictions and OOM kills. Always set both requests and limits for production workloads.</warning>
+    </lesson>
+  </module>
+
+  <assessment>
+    <title>Final Certification Assessment</title>
+    <format>Practical exam in a live Kubernetes environment</format>
+    <duration>120 minutes</duration>
+    <passing-score>80</passing-score>
+    <tasks>
+      <task>Deploy a multi-tier application with proper resource management and health checks</task>
+      <task>Configure horizontal pod autoscaling based on custom metrics</task>
+      <task>Implement a blue-green deployment strategy using Argo Rollouts</task>
+      <task>Set up Prometheus monitoring and create alerting rules for the deployed application</task>
+    </tasks>
+  </assessment>
+</training-course>

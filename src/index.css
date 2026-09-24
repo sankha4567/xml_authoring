@@ -64,55 +64,52 @@ body {
 }
 
 /* =========================================================
-   App Layout
+   App Layout — VSCode Style
    ========================================================= */
 
 .app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
-/* ---- Header ---- */
-
+/* ── Header ── */
 .app-header {
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  padding: 0 24px;
-  height: 60px;
+  background: #1e1e2e;
+  border-bottom: 1px solid #313244;
+  padding: 0 16px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: sticky;
-  top: 0;
+  flex-shrink: 0;
   z-index: 100;
-  box-shadow: var(--shadow-sm);
 }
 
 .app-header-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .app-logo {
-  font-size: 22px;
+  font-size: 18px;
   color: var(--color-primary);
   line-height: 1;
 }
 
 .app-title {
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 700;
-  color: var(--color-text);
-  letter-spacing: -0.3px;
+  color: #cdd6f4;
+  letter-spacing: -0.2px;
 }
 
 .app-subtitle {
-  font-size: 11px;
-  color: var(--color-text-muted);
+  font-size: 10px;
+  color: #585b70;
   font-family: var(--font-mono);
-  letter-spacing: 0.2px;
 }
 
 .app-header-actions {
@@ -121,48 +118,297 @@ body {
   align-items: center;
 }
 
-/* ---- File Info Bar ---- */
-
-.file-info-bar {
-  background: var(--color-primary-light);
-  border-bottom: 1px solid #bfdbfe;
-  padding: 6px 24px;
+/* Sidebar toggle button in header */
+.sidebar-toggle-btn {
+  background: transparent;
+  border: none;
+  color: #a6adc8;
+  cursor: pointer;
+  font-size: 16px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--color-primary);
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s, color 0.1s;
+  font-family: inherit;
+}
+.sidebar-toggle-btn:hover {
+  background: rgba(255,255,255,0.08);
+  color: #cdd6f4;
 }
 
-.file-info-icon {
-  font-size: 14px;
+/* ── Body: sidebar + editor ── */
+.app-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
 }
 
-.file-info-name {
-  font-weight: 500;
+/* ── Sidebar ── */
+.sidebar {
+  background: #181825;
+  border-right: 1px solid #313244;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+  min-width: 160px;
+  max-width: 500px;
+  transition: none;
+}
+
+.sidebar-header {
+  padding: 6px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #a6adc8;
+  border-bottom: 1px solid #313244;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  height: 36px;
+}
+
+.sidebar-filename {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: #585b70;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100px;
+}
+
+.sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px 0;
+}
+
+.sidebar-content::-webkit-scrollbar {
+  width: 6px;
+}
+.sidebar-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-content::-webkit-scrollbar-thumb {
+  background: #313244;
+  border-radius: 3px;
+}
+
+.sidebar-footer {
+  padding: 6px 12px;
+  border-top: 1px solid #313244;
+  flex-shrink: 0;
+}
+
+.sidebar-schema-label {
+  font-size: 10px;
+  color: #585b70;
   font-family: var(--font-mono);
 }
 
-.file-info-badge {
-  margin-left: auto;
+/* ── Resize Handle ── */
+.sidebar-resize-handle {
+  width: 4px;
+  background: transparent;
+  cursor: col-resize;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+  transition: background 0.15s;
+}
+.sidebar-resize-handle::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 4px;
+}
+.sidebar-resize-handle:hover {
   background: var(--color-primary);
-  color: white;
-  padding: 1px 8px;
-  border-radius: 99px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
 }
 
-/* ---- Main ---- */
-
-.app-main {
+/* ── Editor Panel ── */
+.editor-panel {
   flex: 1;
-  padding: 32px 24px;
-  max-width: 1100px;
-  margin: 0 auto;
-  width: 100%;
+  overflow: hidden;
+  padding: 0;
+  background: #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
+
+/* ── Status Bar ── */
+.status-bar {
+  height: 28px;
+  background: var(--color-primary);
+  color: rgba(255,255,255,0.9);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0;
+  font-size: 12px;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.status-item {
+  padding: 0 12px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.status-item:hover {
+  background: rgba(0,0,0,0.15);
+}
+
+.status-item--file {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  background: rgba(0,0,0,0.2);
+}
+
+.status-item--ready {
+  color: #a6e3a1;
+  font-weight: 600;
+}
+
+.status-item--idle {
+  color: rgba(255,255,255,0.7);
+  font-style: italic;
+}
+
+.status-icon {
+  font-size: 11px;
+}
+
+.status-sep {
+  color: rgba(255,255,255,0.4);
+  font-size: 10px;
+}
+
+.status-spacer {
+  flex: 1;
+}
+
+/* =========================================================
+   Document Tree
+   ========================================================= */
+
+.document-tree {
+  padding: 4px 0;
+  font-size: 13px;
+}
+
+.tree-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 16px;
+  color: #585b70;
+  font-size: 12px;
+  text-align: center;
+}
+
+.tree-empty-icon {
+  font-size: 28px;
+  opacity: 0.5;
+}
+
+.tree-empty--error {
+  color: #f38ba8;
+}
+
+.tree-node {
+  display: flex;
+  flex-direction: column;
+}
+
+.tree-node-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 0;
+  padding-right: 8px;
+  cursor: pointer;
+  border-radius: 0;
+  font-size: 12.5px;
+  user-select: none;
+  min-height: 24px;
+  color: #cdd6f4;
+}
+
+.tree-node-row:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.tree-node-row:active {
+  background: rgba(255,255,255,0.1);
+}
+
+.tree-arrow {
+  font-size: 9px;
+  width: 12px;
+  color: #585b70;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.tree-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.tree-tag-name {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 110px;
+}
+
+.tree-attrs-badge {
+  font-size: 9px;
+  color: #f9e2af;
+  background: rgba(249,226,175,0.12);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+.tree-text-preview {
+  font-size: 11px;
+  color: #585b70;
+  margin-left: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  font-style: italic;
+}
+
+
 
 /* =========================================================
    Buttons
@@ -282,6 +528,54 @@ body {
 }
 
 /* =========================================================
+   Editor Error Panel (ErrorBoundary fallback)
+   ========================================================= */
+
+.editor-error-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 32px;
+  text-align: center;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: var(--radius-lg);
+  margin-bottom: 24px;
+}
+
+.editor-error-icon {
+  font-size: 40px;
+  margin-bottom: 16px;
+  color: var(--color-warning);
+}
+
+.editor-error-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #92400e;
+  margin-bottom: 8px;
+}
+
+.editor-error-detail {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #78350f;
+  background: #fef3c7;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  max-width: 600px;
+  margin: 8px 0;
+  word-break: break-all;
+}
+
+.editor-error-hint {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-bottom: 20px;
+}
+
+/* =========================================================
    Empty State
    ========================================================= */
 
@@ -339,10 +633,34 @@ body {
   align-items: center;
   gap: 2px;
   padding: 6px 12px;
-  background: var(--color-surface-alt);
-  border-bottom: 1px solid var(--color-border-light);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   flex-wrap: wrap;
+}
+
+.toolbar-style-select {
+  height: 30px;
+  padding: 0 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  font-weight: 500;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.toolbar-style-select:hover {
+  border-color: #9ca3af;
+}
+
+.toolbar-style-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
 .toolbar--disabled {
@@ -449,152 +767,440 @@ body {
 }
 
 /* =========================================================
-   Editor Wrapper & Surface
+   Editor Wrapper & Paper Sheet Canvas
    ========================================================= */
 
 .editor-wrapper {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
   overflow: hidden;
 }
 
 .editor-surface {
-  padding: 0;
-  min-height: 600px;
+  flex: 1;
   overflow-y: auto;
+  padding: 32px 24px 80px 24px;
+  background: #e9ecef;
+  display: flex;
+  justify-content: center;
 }
 
-/* ProseMirror focus ring */
+/* Paper Sheet Layout (Google Docs / MS Word A4 style) */
 .ProseMirror {
   outline: none;
-  padding: 48px 72px;
-  min-height: 600px;
-  font-family: var(--font-serif);
-  font-size: 16px;
-  line-height: 1.8;
-  color: var(--color-text);
+  background: #ffffff;
+  width: 100%;
+  max-width: 860px;
+  min-height: 1050px;
+  margin: 0 auto;
+  padding: 72px 88px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.15);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 15.5px;
+  line-height: 1.75;
+  color: #1e293b;
+  position: relative;
+  transition: all 0.2s ease;
 }
 
 .ProseMirror-focused {
   outline: none;
 }
 
-/* =========================================================
-   Document Node Styles inside ProseMirror
-   ========================================================= */
-
-/* Title */
-.ProseMirror h1.xml-title {
+/* Native HTML Headings, Paragraphs and Lists (Word-like rich text) */
+.ProseMirror h1 {
   font-size: 30px;
-  font-weight: 700;
-  color: var(--color-text);
-  letter-spacing: -0.5px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.6px;
   line-height: 1.25;
-  margin-bottom: 32px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--color-border-light);
-  font-family: var(--font-sans);
+  margin-top: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e2e8f0;
 }
 
-/* Section */
-.ProseMirror div.xml-section {
-  border-left: 3px solid var(--color-border-light);
-  padding-left: 20px;
-  margin: 28px 0;
-  position: relative;
-}
-
-.ProseMirror div.xml-section::before {
-  content: 'section';
-  position: absolute;
-  top: 0;
-  left: -3px;
-  transform: translateX(-100%) translateX(-8px);
-  font-size: 9px;
-  font-weight: 600;
-  color: var(--color-text-muted);
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  opacity: 0.5;
-}
-
-/* Nested sections */
-.ProseMirror div.xml-section div.xml-section {
-  border-left-color: #e0e7ff;
-  padding-left: 16px;
-  margin: 16px 0;
-}
-
-/* Heading */
-.ProseMirror h2.xml-heading {
-  font-size: 20px;
+.ProseMirror h2 {
+  font-size: 22px;
   font-weight: 700;
-  color: var(--color-text);
-  margin-top: 24px;
-  margin-bottom: 12px;
-  letter-spacing: -0.3px;
-  font-family: var(--font-sans);
-}
-
-.ProseMirror h3.xml-heading {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  margin-top: 20px;
-  margin-bottom: 8px;
-  font-family: var(--font-sans);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Paragraph */
-.ProseMirror p.xml-paragraph {
+  color: #1e293b;
+  margin-top: 32px;
   margin-bottom: 14px;
-  color: var(--color-text);
+  letter-spacing: -0.3px;
+  line-height: 1.35;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 6px;
 }
 
-/* Lists */
+.ProseMirror h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #334155;
+  margin-top: 24px;
+  margin-bottom: 10px;
+}
+
+.ProseMirror p {
+  margin-bottom: 16px;
+  font-size: 15.5px;
+  line-height: 1.75;
+  color: #334155;
+}
+
 .ProseMirror ul,
 .ProseMirror ol {
-  margin: 12px 0 16px 24px;
+  margin: 12px 0 16px 28px;
+  padding-left: 8px;
+}
+
+.ProseMirror ul {
+  list-style-type: disc;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
 }
 
 .ProseMirror li {
   margin-bottom: 6px;
-  color: var(--color-text);
+  line-height: 1.6;
 }
 
-/* Inline marks */
-.ProseMirror strong {
+.ProseMirror li p {
+  margin-bottom: 4px;
+}
+
+/* ── Toolbar View Mode Switcher Buttons ── */
+.view-mode-toggle-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(0, 0, 0, 0.06);
+  padding: 2px;
+  border-radius: var(--radius-md);
+  margin-left: 8px;
+}
+
+.view-mode-btn {
+  font-size: 11.5px;
+  padding: 3px 10px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  color: #475569;
+}
+
+.view-mode-btn.toolbar-btn--active {
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* =========================================================
+   MODE 1: Clean Document View (.view-mode-doc)
+   ========================================================= */
+
+/* Strip raw tags and dashed borders */
+.view-mode-doc .ProseMirror div[data-xml-tag] {
+  border: none;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+}
+
+.view-mode-doc .ProseMirror div[data-xml-tag]::before {
+  display: none !important;
+}
+
+/* Top-level Document container */
+.view-mode-doc .ProseMirror div[data-xml-tag="document"],
+.view-mode-doc .ProseMirror div[data-xml-tag="article"],
+.view-mode-doc .ProseMirror div[data-xml-tag="book"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="policy"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="course"] {
+  display: block;
+}
+
+/* ── Document Metadata Cards ── */
+.view-mode-doc .ProseMirror div[data-xml-tag*="metadata"],
+.view-mode-doc .ProseMirror div[data-xml-tag="front-matter"],
+.view-mode-doc .ProseMirror div[data-xml-tag="info"],
+.view-mode-doc .ProseMirror div[data-xml-tag="course-info"] {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Metadata title inside metadata block */
+.view-mode-doc .ProseMirror div[data-xml-tag*="metadata"] div[data-xml-tag*="title"] {
+  font-size: 26px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 6px;
+  border: none;
+  padding: 0;
+  letter-spacing: -0.4px;
+}
+
+/* Metadata property items (identifier, created, classification, etc.) */
+.view-mode-doc .ProseMirror div[data-xml-tag*="metadata"] div[data-xml-tag*="identifier"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="metadata"] div[data-xml-tag*="classification"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="metadata"] div[data-xml-tag*="created"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="metadata"] div[data-xml-tag*="modified"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="metadata"] div[data-xml-tag*="version"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="metadata"] div[data-xml-tag*="isbn"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="metadata"] div[data-xml-tag*="publisher"] {
+  font-size: 13px;
+  color: #64748b;
+  font-family: var(--font-mono);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.view-mode-doc .ProseMirror div[data-xml-tag*="metadata"] div[data-xml-tag*="identifier"]::before,
+.view-mode-doc .ProseMirror div[data-xml-tag*="metadata"] div[data-xml-tag*="classification"]::before,
+.view-mode-doc .ProseMirror div[data-xml-tag*="metadata"] div[data-xml-tag*="created"]::before,
+.view-mode-doc .ProseMirror div[data-xml-tag*="metadata"] div[data-xml-tag*="modified"]::before,
+.view-mode-doc .ProseMirror div[data-xml-tag*="metadata"] div[data-xml-tag*="version"]::before,
+.view-mode-doc .ProseMirror div[data-xml-tag*="metadata"] div[data-xml-tag*="isbn"]::before,
+.view-mode-doc .ProseMirror div[data-xml-tag*="metadata"] div[data-xml-tag*="publisher"]::before {
+  display: inline-block !important;
+  content: attr(data-xml-tag) ':';
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #94a3b8;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+}
+
+/* ── Document Titles & Headings ── */
+.view-mode-doc .ProseMirror div[data-xml-tag*="title"]:not(div[data-xml-tag*="metadata"] div[data-xml-tag*="title"]),
+.view-mode-doc .ProseMirror div[data-xml-tag="title"] {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.6px;
+  line-height: 1.25;
+  margin-top: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.view-mode-doc .ProseMirror div[data-xml-tag*="heading"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="chapter-title"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="section-title"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="module-title"] {
+  font-size: 22px;
   font-weight: 700;
+  color: #1e293b;
+  margin-top: 32px;
+  margin-bottom: 14px;
+  letter-spacing: -0.3px;
+  line-height: 1.35;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 6px;
 }
 
-.ProseMirror em {
+.view-mode-doc .ProseMirror div[data-xml-tag*="subsection"] div[data-xml-tag*="heading"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="topic-title"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="clause-title"] {
+  font-size: 18px;
+  font-weight: 600;
+  color: #334155;
+  margin-top: 24px;
+  margin-bottom: 10px;
+  border: none;
+  padding: 0;
+}
+
+/* ── Paragraphs & Body Content ── */
+.view-mode-doc .ProseMirror div[data-xml-tag="paragraph"],
+.view-mode-doc .ProseMirror div[data-xml-tag="p"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="description"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="summary"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="statement"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="content"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="explanation"] {
+  margin-bottom: 16px;
+  font-size: 15.5px;
+  line-height: 1.75;
+  color: #334155;
+}
+
+/* ── Sections & Chapters ── */
+.view-mode-doc .ProseMirror div[data-xml-tag*="section"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="chapter"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="module"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="clause"] {
+  margin-top: 28px;
+  margin-bottom: 20px;
+}
+
+/* ── Callout Banners (Warnings, Notes, Tips) ── */
+.view-mode-doc .ProseMirror div[data-xml-tag*="warning"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="danger"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="caution"] {
+  background: #fffbeb;
+  border-left: 4px solid #f59e0b;
+  border-radius: 0 6px 6px 0;
+  padding: 14px 18px;
+  margin: 20px 0;
+  color: #92400e;
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.view-mode-doc .ProseMirror div[data-xml-tag*="warning"]::before,
+.view-mode-doc .ProseMirror div[data-xml-tag*="danger"]::before,
+.view-mode-doc .ProseMirror div[data-xml-tag*="caution"]::before {
+  display: block !important;
+  content: '⚠ ' attr(data-xml-tag);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #b45309;
+  margin-bottom: 4px;
+}
+
+.view-mode-doc .ProseMirror div[data-xml-tag*="note"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="tip"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="important"] {
+  background: #eff6ff;
+  border-left: 4px solid #3b82f6;
+  border-radius: 0 6px 6px 0;
+  padding: 14px 18px;
+  margin: 20px 0;
+  color: #1e40af;
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.view-mode-doc .ProseMirror div[data-xml-tag*="note"]::before,
+.view-mode-doc .ProseMirror div[data-xml-tag*="tip"]::before,
+.view-mode-doc .ProseMirror div[data-xml-tag*="important"]::before {
+  display: block !important;
+  content: 'ℹ ' attr(data-xml-tag);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #2563eb;
+  margin-bottom: 4px;
+}
+
+/* ── Code & Examples ── */
+.view-mode-doc .ProseMirror div[data-xml-tag*="code"],
+.view-mode-doc .ProseMirror div[data-xml-tag*="example"] {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  color: #0f172a;
+  margin: 16px 0;
+}
+
+/* ── Lists ── */
+.view-mode-doc .ProseMirror div[data-xml-tag*="list"] {
+  margin: 12px 0 16px 20px;
+  padding-left: 12px;
+}
+
+.view-mode-doc .ProseMirror div[data-xml-tag*="item"] {
+  margin-bottom: 6px;
+  display: list-item;
+  list-style-type: disc;
+}
+
+/* =========================================================
+   MODE 2: Structure View (.view-mode-structure)
+   ========================================================= */
+
+.view-mode-structure .ProseMirror div[data-xml-tag] {
+  border: 1px dashed rgba(59, 130, 246, 0.4);
+  padding: 6px 10px;
+  margin: 6px 0;
+  border-radius: 4px;
+  background: rgba(59, 130, 246, 0.015);
+  position: relative;
+}
+
+.view-mode-structure .ProseMirror div[data-xml-tag]::before {
+  content: '<' attr(data-xml-tag) '>';
+  display: block;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--color-primary);
+  opacity: 0.85;
+  font-weight: 600;
+  margin-bottom: 3px;
+  user-select: none;
+}
+
+.view-mode-structure .ProseMirror div[data-xml-tag]:hover {
+  border-color: var(--color-primary);
+  background: rgba(59, 130, 246, 0.04);
+}
+
+/* =========================================================
+   Shared Inline Styles
+   ========================================================= */
+
+.ProseMirror div[data-xml-tag="bold"],
+.ProseMirror span[data-xml-tag="bold"] {
+  font-weight: 700;
+  display: inline;
+}
+
+.ProseMirror div[data-xml-tag="italic"],
+.ProseMirror span[data-xml-tag="italic"] {
   font-style: italic;
+  display: inline;
 }
 
-.ProseMirror u {
+.ProseMirror div[data-xml-tag="underline"],
+.ProseMirror span[data-xml-tag="underline"] {
   text-decoration: underline;
   text-underline-offset: 2px;
+  display: inline;
 }
 
-.ProseMirror a.xml-link {
+.ProseMirror a,
+.ProseMirror div[data-xml-tag="link"],
+.ProseMirror span[data-xml-tag="link"] {
   color: var(--color-primary);
   text-decoration: underline;
   text-underline-offset: 2px;
   cursor: pointer;
+  display: inline;
+  transition: color 0.15s, background-color 0.15s;
 }
 
-.ProseMirror a.xml-link:hover {
+.ProseMirror a:hover,
+.ProseMirror div[data-xml-tag="link"]:hover,
+.ProseMirror span[data-xml-tag="link"]:hover {
   color: var(--color-primary-hover);
+  background-color: rgba(37, 99, 235, 0.08);
+  border-radius: 2px;
 }
 
 /* Selection */
 .ProseMirror ::selection {
-  background: rgba(37, 99, 235, 0.15);
+  background: rgba(37, 99, 235, 0.2);
 }
 
 /* Placeholder for empty nodes */

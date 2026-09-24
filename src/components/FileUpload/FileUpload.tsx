@@ -1,41 +1,36 @@
 /**
  * FileUpload Component
  *
- * Handles XML file selection and drives the full upload pipeline:
- * File → parse → validate → xmlToModel → setDocumentModel
- *
- * No XML parsing or business logic directly here —
- * it delegates to the xml/ layer functions.
+ * Pipeline: File → parseXml → xmlToAst → SchemaDiscoverer → sanitizeSchema → onSuccess
  */
 
 import React, { useRef } from 'react';
 import { parseXml } from '../../xml/parser/parseXml';
-import { validateXml } from '../../xml/validation/validateXml';
-import { xmlToModel } from '../../xml/xml-to-model/xmlToModel';
-import type { DocumentModel } from '../../document-model/types';
+import { xmlToAst } from '../../xml/xml-to-model/xmlToModel';
+import { SchemaDiscoverer } from '../../editor/schema/SchemaDiscoverer';
+import { sanitizeSchema } from '../../editor/schema/SchemaSanitizer';
+import type { XmlElement } from '../../document-model/GenericAst';
+import type { SanitizedTag } from '../../editor/schema/SchemaSanitizer';
 
 interface FileUploadProps {
-  onSuccess: (model: DocumentModel, fileName: string) => void;
+  onSuccess: (
+    ast: XmlElement,
+    schema: SanitizedTag[],
+    tagToPm: Map<string, string>,
+    pmToTag: Map<string, string>,
+    fileName: string
+  ) => void;
   onError: (messages: string[]) => void;
 }
 
-export const FileUpload: React.FC<FileUploadProps> = ({
-  onSuccess,
-  onError,
-}) => {
+export const FileUpload: React.FC<FileUploadProps> = ({ onSuccess, onError }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleClick = () => {
-    inputRef.current?.click();
-  };
+  const handleClick = () => inputRef.current?.click();
 
-  const handleFileChange = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    // Reset input so the same file can be re-uploaded
     e.target.value = '';
 
     let xmlText: string;
@@ -46,31 +41,29 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       return;
     }
 
-    // 1. Parse XML
+    // 1. Syntax-level XML parse
     const parseResult = parseXml(xmlText);
     if (!parseResult.ok) {
       onError([parseResult.message]);
       return;
     }
 
-    // 2. Validate structure
-    const validationResult = validateXml(parseResult.nodes);
-    if (!validationResult.valid) {
-      onError(validationResult.errors);
-      return;
-    }
-
-    // 3. Convert to Internal Document Model
-    let model: DocumentModel;
+    // 2. Build Generic AST
+    let ast: XmlElement;
     try {
-      model = xmlToModel(parseResult.nodes);
+      ast = xmlToAst(parseResult.nodes);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      onError([`Model conversion error: ${msg}`]);
+      onError([`AST error: ${err instanceof Error ? err.message : String(err)}`]);
       return;
     }
 
-    onSuccess(model, file.name);
+    // 3. Discover schema
+    const rawSchema = new SchemaDiscoverer().discover(ast);
+
+    // 4. Sanitize — rename hyphens, reserved names → safe ProseMirror node names
+    const { sanitized, tagToPm, pmToTag } = sanitizeSchema(rawSchema);
+
+    onSuccess(ast, sanitized, tagToPm, pmToTag, file.name);
   };
 
   return (

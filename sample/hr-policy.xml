@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy-document version="2.1" status="approved" classification="internal">
+  <header>
+    <policy-id>POL-2024-HR-042</policy-id>
+    <policy-title>Remote Work and Flexible Work Arrangement Policy</policy-title>
+    <effective-date>2024-01-01</effective-date>
+    <review-date>2025-01-01</review-date>
+    <owner>Human Resources Department</owner>
+    <approver>Chief People Officer</approver>
+  </header>
+
+  <purpose>
+    <statement>This policy establishes guidelines and expectations for employees working remotely or under flexible work arrangements to ensure productivity, security, and well-being.</statement>
+  </purpose>
+
+  <scope>
+    <statement>This policy applies to all full-time and part-time employees, contractors, and consultants who work remotely on a regular or occasional basis.</statement>
+    <exclusion>Temporary emergency remote work situations are handled under the Business Continuity Policy (POL-2024-BC-001).</exclusion>
+  </scope>
+
+  <definitions>
+    <term name="Remote Work">Work performed at a location other than the primary office, including home, co-working spaces, or other approved locations.</term>
+    <term name="Hybrid Work">A flexible arrangement where an employee splits their working time between an office and a remote location.</term>
+    <term name="Core Hours">Designated time periods during which all employees must be available for collaboration, regardless of their work location.</term>
+  </definitions>
+
+  <section number="1">
+    <section-title>Eligibility Requirements</section-title>
+    <clause number="1.1">
+      <clause-title>General Eligibility</clause-title>
+      <content>Employees must have completed a minimum of six months of employment before applying for a formal remote work arrangement. Performance must be rated as Meets Expectations or above in the most recent review cycle.</content>
+    </clause>
+    <clause number="1.2">
+      <clause-title>Role Suitability</clause-title>
+      <content>Not all roles are suitable for remote work. Managers must assess whether the nature of the role, team dependencies, and client requirements permit remote work.</content>
+      <important>Customer-facing roles requiring physical presence are exempt from this policy by default.</important>
+    </clause>
+  </section>
+
+  <section number="2">
+    <section-title>Equipment and Security Requirements</section-title>
+    <clause number="2.1">
+      <clause-title>Company-Provided Equipment</clause-title>
+      <content>The company will provide a laptop and necessary peripherals for approved remote workers. Personal devices may not be used for work purposes without explicit approval from the IT Security team.</content>
+    </clause>
+    <clause number="2.2">
+      <clause-title>Network Security</clause-title>
+      <content>All remote work must be conducted over a secure, password-protected network. Employees must use the company VPN whenever accessing internal systems.</content>
+      <critical-warning>Using public WiFi without VPN connection is a policy violation and may result in disciplinary action.</critical-warning>
+    </clause>
+  </section>
+
+  <section number="3">
+    <section-title>Compliance and Enforcement</section-title>
+    <clause number="3.1">
+      <clause-title>Monitoring</clause-title>
+      <content>The company reserves the right to monitor system access, network activity, and productivity metrics for employees working remotely, in accordance with applicable laws.</content>
+    </clause>
+    <clause number="3.2">
+      <clause-title>Policy Violations</clause-title>
+      <content>Violations of this policy may result in withdrawal of remote work privileges, formal disciplinary action, or termination of employment depending on severity.</content>
+    </clause>
+  </section>
+
+  <revision-history>
+    <revision version="2.1" date="2024-01-01">
+      <change>Added Section 2.2 on network security requirements</change>
+      <change>Updated core hours definition to reflect global team requirements</change>
+    </revision>
+    <revision version="2.0" date="2023-06-15">
+      <change>Complete policy rewrite to reflect post-pandemic hybrid work norms</change>
+    </revision>
+  </revision-history>
+</policy-document>

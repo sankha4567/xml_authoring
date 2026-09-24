@@ -1,162 +1,79 @@
 /**
- * Internal Document Model → Tiptap JSON Adapter (Phase 5)
+ * Generic AST → Tiptap JSON Adapter
  *
- * Converts DocumentModel into Tiptap-compatible JSON (JSONContent).
- *
- * IMPORTANT:
- *   - Must NOT import fast-xml-parser or XML types.
- *   - May import Tiptap types ONLY for the output JSON shape (JSONContent).
- *   - Business logic must not leak into this adapter.
+ * Uses tagToPm map to convert original XML tag names → safe ProseMirror node names.
+ * Tiptap always requires { type: "doc" } as root; the XML root becomes its sole child.
  */
 
-import type { JSONContent } from '@tiptap/core';
-import type {
-  ArticleNode,
-  BlockNode,
-  BulletListNode,
-  DocumentModel,
-  HeadingNode,
-  InlineNode,
-  ListItemNode,
-  OrderedListNode,
-  ParagraphNode,
-  SectionNode,
-  TitleNode,
-} from '../../document-model/types';
+import type { JSONContent } from '@tiptap/react';
+import type { XmlElement, XmlNode } from '../../document-model/GenericAst';
 
-// ---------------------------------------------------------------------------
-// Inline → Tiptap text nodes with marks
-// ---------------------------------------------------------------------------
+export function modelToTiptap(
+  root: XmlElement,
+  tagToPm: Map<string, string>
+): JSONContent {
+  return {
+    type: 'doc',
+    content: [convertElement(root, tagToPm)],
+  };
+}
 
-/**
- * Convert InlineNode[] into Tiptap text marks.
- * Each TextNode in the model becomes a Tiptap text node with marks.
- *
- * Consecutive nodes with identical marks will be merged for cleaner output.
- */
-function convertInlineNodes(nodes: ReadonlyArray<InlineNode>): JSONContent[] {
-  if (nodes.length === 0) {
-    return [{ type: 'text', text: '' }];
-  }
-
-  return nodes.map((node): JSONContent => {
-    const marks: JSONContent['marks'] = node.marks.map((mark) => {
-      if (mark.type === 'link') {
-        return { type: 'link', attrs: { href: mark.attrs?.['href'] ?? '' } };
-      }
-      return { type: mark.type };
-    });
-
+function convertNode(node: XmlNode, tagToPm: Map<string, string>): JSONContent | null {
+  if (node.type === 'text') {
+    if (!node.text.trim()) return null; // skip pure-whitespace text nodes
+    const marks = node.marks?.map(m => ({ type: m })) || [];
     return {
       type: 'text',
       text: node.text,
       ...(marks.length > 0 ? { marks } : {}),
     };
-  });
-}
-
-// ---------------------------------------------------------------------------
-// Block node converters
-// ---------------------------------------------------------------------------
-
-function convertTitle(node: TitleNode): JSONContent {
-  return {
-    type: 'title',
-    content: convertInlineNodes(node.content),
-  };
-}
-
-function convertHeading(node: HeadingNode): JSONContent {
-  return {
-    type: 'xmlHeading',
-    attrs: { level: node.level },
-    content: convertInlineNodes(node.content),
-  };
-}
-
-function convertParagraph(node: ParagraphNode): JSONContent {
-  return {
-    type: 'paragraph',
-    content: convertInlineNodes(node.content),
-  };
-}
-
-function convertListItem(node: ListItemNode): JSONContent {
-  const content = node.content.map((child): JSONContent => {
-    if (child.type === 'paragraph') return convertParagraph(child);
-    if (child.type === 'heading') return convertHeading(child);
-    return { type: 'paragraph', content: [] };
-  });
-
-  return {
-    type: 'listItem',
-    content: content.length > 0 ? content : [{ type: 'paragraph', content: [] }],
-  };
-}
-
-function convertBulletList(node: BulletListNode): JSONContent {
-  return {
-    type: 'bulletList',
-    content: node.items.map(convertListItem),
-  };
-}
-
-function convertOrderedList(node: OrderedListNode): JSONContent {
-  return {
-    type: 'orderedList',
-    content: node.items.map(convertListItem),
-  };
-}
-
-function convertSection(node: SectionNode): JSONContent {
-  return {
-    type: 'section',
-    attrs: node.attrs ?? {},
-    content: node.content
-      .map(convertBlockNode)
-      .filter((n): n is JSONContent => n !== null),
-  };
-}
-
-function convertBlockNode(node: BlockNode): JSONContent | null {
-  switch (node.type) {
-    case 'title':
-      return convertTitle(node);
-    case 'heading':
-      return convertHeading(node);
-    case 'paragraph':
-      return convertParagraph(node);
-    case 'bullet-list':
-      return convertBulletList(node);
-    case 'ordered-list':
-      return convertOrderedList(node);
-    case 'section':
-      return convertSection(node);
-    default:
-      return null;
   }
+
+  // Handle link and a elements as inline text with link marks
+  const lowerTag = node.tag.toLowerCase();
+  if (lowerTag === 'link' || lowerTag === 'a') {
+    const href = node.attrs?.href || node.attrs?.['xlink:href'] || '';
+    const text = node.children
+      .map(c => (c.type === 'text' ? c.text : ''))
+      .join('');
+    if (!text) return null;
+    return {
+      type: 'text',
+      text,
+      marks: [{ type: 'link', attrs: { href } }],
+    };
+  }
+
+  return convertElement(node, tagToPm);
 }
 
-function convertArticle(node: ArticleNode): JSONContent {
-  const titleNode = convertTitle(node.title);
-  const bodyNodes = node.content
-    .map(convertBlockNode)
-    .filter((n): n is JSONContent => n !== null);
+function convertElement(node: XmlElement, tagToPm: Map<string, string>): JSONContent {
+  const pmName = tagToPm.get(node.tag) ?? node.tag;
 
-  return {
-    type: 'article',
-    content: [titleNode, ...bodyNodes],
-  };
-}
+  const result: JSONContent = { type: pmName };
 
-// ---------------------------------------------------------------------------
-// Public API
-// ---------------------------------------------------------------------------
+  if (pmName === 'heading') {
+    const rawLevel = Number(node.attrs?.level || (node.tag.toLowerCase() === 'h2' ? 2 : node.tag.toLowerCase() === 'h3' ? 3 : 1));
+    result.attrs = {
+      level: Math.min(Math.max(rawLevel, 1), 3),
+      ...(node.attrs ? { xmlAttrs: node.attrs } : {}),
+    };
+  } else if (node.attrs && Object.keys(node.attrs).length > 0) {
+    result.attrs = { xmlAttrs: node.attrs };
+  }
 
-/**
- * Convert an Internal Document Model into Tiptap JSON.
- * This function must NOT import fast-xml-parser.
- */
-export function modelToTiptap(model: DocumentModel): JSONContent {
-  return convertArticle(model.article);
+  let children = node.children
+    .map(c => convertNode(c, tagToPm))
+    .filter((c): c is JSONContent => c !== null);
+
+  // If this is a listItem and children are text nodes, wrap in a paragraph to satisfy Tiptap's listItem schema
+  if (pmName === 'listItem' && children.some(c => c.type === 'text')) {
+    children = [{ type: 'paragraph', content: children }];
+  }
+
+  if (children.length > 0) {
+    result.content = children;
+  }
+
+  return result;
 }

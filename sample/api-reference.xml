@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api-reference version="3.0" format="REST">
+  <info>
+    <title>PayStream Payments API</title>
+    <description>RESTful API for processing payments, managing subscriptions, and handling refunds for enterprise merchants.</description>
+    <base-url>https://api.paystream.io/v3</base-url>
+    <contact>developer-support@paystream.io</contact>
+  </info>
+
+  <authentication>
+    <method>Bearer Token</method>
+    <description>All API requests must include a valid API key in the Authorization header. Keys are issued per merchant account.</description>
+    <note>API keys should never be exposed in client-side code or version control systems.</note>
+  </authentication>
+
+  <endpoint method="POST" path="/payments">
+    <summary>Create a Payment</summary>
+    <description>Initiates a new payment transaction. Supports credit cards, debit cards, and digital wallets.</description>
+
+    <request>
+      <content-type>application/json</content-type>
+      <field name="amount" type="integer" required="true">
+        <description>Payment amount in the smallest currency unit (e.g., cents for USD). Must be a positive integer.</description>
+        <example>5000</example>
+      </field>
+      <field name="currency" type="string" required="true">
+        <description>Three-letter ISO 4217 currency code.</description>
+        <example>USD</example>
+      </field>
+      <field name="payment_method_id" type="string" required="true">
+        <description>The ID of a previously created payment method object.</description>
+        <example>pm_1NqaG2LT3kG7e</example>
+      </field>
+      <field name="description" type="string" required="false">
+        <description>An arbitrary string attached to the payment for your records.</description>
+        <example>Subscription renewal - Enterprise Plan</example>
+      </field>
+      <field name="metadata" type="object" required="false">
+        <description>A set of key-value pairs you can attach to a payment for internal tracking.</description>
+      </field>
+    </request>
+
+    <response status="200">
+      <description>Payment created successfully and is processing.</description>
+      <field name="id" type="string">Unique payment identifier prefixed with pay_.</field>
+      <field name="status" type="string">Current status. One of: pending, succeeded, failed, requires_action.</field>
+      <field name="amount" type="integer">The amount charged in smallest currency unit.</field>
+      <field name="created_at" type="timestamp">ISO 8601 timestamp of when the payment was created.</field>
+    </response>
+
+    <response status="400">
+      <description>Bad request. The request body is missing required fields or contains invalid values.</description>
+    </response>
+
+    <response status="402">
+      <description>Payment failed. The card was declined or the payment method is invalid.</description>
+    </response>
+
+    <errors>
+      <error code="card_declined">The payment method was declined by the issuing bank.</error>
+      <error code="insufficient_funds">The card has insufficient funds for this transaction.</error>
+      <error code="invalid_currency">The specified currency is not supported by this merchant account.</error>
+    </errors>
+  </endpoint>
+
+  <endpoint method="GET" path="/payments/{id}">
+    <summary>Retrieve a Payment</summary>
+    <description>Retrieves the details of a previously created payment by its unique identifier.</description>
+
+    <path-params>
+      <param name="id" type="string" required="true">The unique identifier of the payment to retrieve.</param>
+    </path-params>
+
+    <response status="200">
+      <description>Payment details retrieved successfully.</description>
+      <field name="id" type="string">Payment identifier.</field>
+      <field name="status" type="string">Final payment status.</field>
+      <field name="refunded" type="boolean">Whether this payment has been refunded.</field>
+    </response>
+
+    <response status="404">
+      <description>Payment not found. The specified ID does not exist on this account.</description>
+    </response>
+  </endpoint>
+
+  <endpoint method="POST" path="/refunds">
+    <summary>Create a Refund</summary>
+    <description>Refunds a payment that has already been captured. Partial refunds are supported.</description>
+
+    <request>
+      <content-type>application/json</content-type>
+      <field name="payment_id" type="string" required="true">
+        <description>The ID of the payment to refund.</description>
+      </field>
+      <field name="amount" type="integer" required="false">
+        <description>Amount to refund in smallest currency unit. Omit to issue a full refund.</description>
+      </field>
+      <field name="reason" type="string" required="false">
+        <description>Reason for the refund. One of: duplicate, fraudulent, customer_request.</description>
+      </field>
+    </request>
+
+    <response status="200">
+      <description>Refund created successfully.</description>
+    </response>
+
+    <note>Refunds typically take 5-10 business days to appear on the customer's statement.</note>
+  </endpoint>
+</api-reference>

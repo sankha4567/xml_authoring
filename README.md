@@ -1,298 +1,171 @@
-# XML Author
+# XML Author — Dynamic Document Authoring Engine
 
-A production-quality, client-side XML authoring web application built with **React + TypeScript + Vite + Tiptap + fast-xml-parser**.
+A production-grade, client-side dynamic XML authoring web application built with **React, TypeScript, Vite, Tiptap, and fast-xml-parser**.
 
-Inspired by the authoring mode of professional XML editors like Oxygen XML Editor, but runs entirely in the browser with no backend required.
-
-![XML Author Screenshot](docs/screenshot.png)
+Runs entirely in the browser with **no backend required**. It allows users to upload **any valid XML file** (regardless of schema, tag names, or nesting depth), renders it as an executive **Microsoft Word / Google Docs-style paper canvas**, displays a **VS Code-style collapsible hierarchy tree**, and supports rich document authoring with **100% round-trip XML fidelity**.
 
 ---
 
-## ✨ Features
+## 🚀 Key Features
 
-- 📂 **Upload** any valid article XML file
-- ✅ **Validate** document structure against the supported vocabulary with specific error messages
-- ✏️ **Rich-text editing** — Bold, Italic, Underline, H2, H3, Bullet list, Ordered list, Link/Unlink
-- 🔄 **Live synchronisation** — every edit updates the Internal Document Model in real time
-- 💾 **Download** the edited document as clean, well-formed XML
-- 🏗️ **Strict layered architecture** — XML ↔ Internal Document Model ↔ Tiptap, no shortcuts
-- 🧪 **32 round-trip tests** verifying semantic preservation
+### 1. Dynamic Auto-Schema Discovery (Zero Hardcoding)
+- **Arbitrary Tag Support**: Load any XML schema without predefined JSON schemas or DTDs.
+- **Context Inference**: Automatically infers whether tags act as structural blocks, text containers, or inline elements based on document context.
+- **Name Sanitization**: Automatically handles invalid ProseMirror identifier characters (such as hyphens `-` or colons `:`) and reserved primitives (`text`, `doc`, `paragraph`), mapping them safely while maintaining original tag names for export.
 
----
+### 2. VS Code-Style Dual Panel Layout
+- **Document Explorer (Left Sidebar)**:
+  - Collapsible tree view showing the XML tag hierarchy.
+  - Depth-based color coding (Teal, Purple, Green, Peach).
+  - XML attribute badges (`@count`) with hover tooltips showing raw attributes.
+  - Real-time text previews for leaf nodes.
+  - Drag-to-resize handle (min 160px, max 500px) and a `⟨` / `⟩` collapse toggle.
+- **Status Bar (Bottom)**:
+  - Displays document filename, total node count, discovered tag types count, and system status.
 
-## Architecture
+### 3. Word & Google Docs-Style Document View
+- **Paper Canvas**: Centered A4-style paper sheet with elevation shadows and page margins on a desktop backdrop.
+- **Clean Semantic Typography**:
+  - No raw dashed wireframes or `<tag>` prefixes cluttering the reading view.
+  - Titles & Headings render as clean typographical headers.
+  - Metadata blocks (`<metadata>`, `<info>`, `<front-matter>`) render as sleek property summary cards.
+  - Alert callouts (`<warning>`, `<note>`, `<caution>`, `<tip>`) render as colored callout banners.
+  - Code containers (`<code>`, `<example>`) render in monospace syntax blocks.
 
-The application enforces a strict 3-layer separation where the **Internal Document Model is the sole canonical source of truth**.
+### 4. Word-Processor Authoring Tools
+- **Style Selector Dropdown**: Transform any line or block into `Normal Text`, `Heading 1`, `Heading 2`, or `Heading 3`.
+- **Lists with Full Keyboard Lifecycle**:
+  - **`• List` (Bulleted List)** & **`1. List` (Numbered List)**.
+  - Hitting <kbd>Enter</kbd> at the end of a bullet automatically creates the next bullet.
+  - Hitting <kbd>Enter</kbd> or <kbd>Backspace</kbd> on an empty bullet exits the list.
+- **Rich Text Formatting**: **Bold** (<kbd>Ctrl+B</kbd>), *Italic* (<kbd>Ctrl+I</kbd>), <u>Underline</u> (<kbd>Ctrl+U</kbd>).
+- **Link Insertion & Navigation**:
+  - Smart Link Dialog supporting URL, Display Text, and Link removal.
+  - **<kbd>Ctrl</kbd> + Click** immediately opens the target link in a new tab.
+  - Normal click places the cursor inside the link text for easy inline editing.
 
-```
-XML File
-  ↓ fast-xml-parser          (syntax only)
-Parsed XML
-  ↓ validateXml()            (structural validation)
-  ↓ xmlToModel()             (semantic conversion)
-╔══════════════════════════╗
-║  INTERNAL DOCUMENT MODEL ║  ← Canonical source of truth
-╚══════════════════════════╝
-  ↓ modelToTiptap()
-Tiptap JSON
-  ↓ Tiptap Editor (user edits)
-Tiptap JSON
-  ↓ tiptapToModel()
-╔══════════════════════════╗
-║  INTERNAL DOCUMENT MODEL ║  ← Updated
-╚══════════════════════════╝
-  ↓ modelToXml()
-XML String → Download .xml
-```
-
-### Architectural Constraints (strictly enforced)
-
-| Rule | Reason |
-|---|---|
-| `xml/` never imports Tiptap | XML layer is editor-agnostic |
-| `editor/` never imports fast-xml-parser | Editor layer is parser-agnostic |
-| `document-model/` imports nothing external | Domain model is framework-independent |
-| No `xmlToTiptap()` shortcut | Architecture stays extensible |
-| No `tiptapToXml()` shortcut | Model remains the canonical layer |
-
-This separation means the architecture can later support multiple output formats from the same model:
-
-```
-Internal Document Model
-  ├── XML    (implemented)
-  ├── DOCX   (future)
-  └── PDF    (future)
-```
+### 5. Resilient Architecture & Error Boundary
+- Built-in `EditorErrorBoundary` catches any schema or rendering exceptions and displays friendly diagnostic recovery cards instead of a blank screen.
 
 ---
 
-## Supported XML Vocabulary
+## 📐 Data Flow & Architecture
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<article id="my-doc">
-    <title>Document Title</title>
+The application enforces a strict unidirectional pipeline with the **Generic AST** as the single source of truth:
 
-    <section id="intro">
-        <heading>Section Heading</heading>
-        <heading level="3">Sub-heading</heading>
-
-        <paragraph>
-            This is <bold>bold</bold>, <italic>italic</italic>,
-            <underline>underlined</underline> and
-            <link href="https://example.com">linked</link> text.
-        </paragraph>
-
-        <bullet-list>
-            <list-item><paragraph>First item</paragraph></list-item>
-            <list-item><paragraph>Second item</paragraph></list-item>
-        </bullet-list>
-
-        <ordered-list>
-            <list-item><paragraph>Step one</paragraph></list-item>
-            <list-item><paragraph>Step two</paragraph></list-item>
-        </ordered-list>
-
-        <section id="nested">
-            <heading>Nested Section</heading>
-            <paragraph>Sections can be nested to any depth.</paragraph>
-        </section>
-    </section>
-</article>
+```mermaid
+flowchart TD
+    A[XML File Upload] --> B[fast-xml-parser\nSyntax validation]
+    B --> C[xmlToAst\nRecursive Generic AST]
+    C --> D[SchemaDiscoverer\nClassifies block / textBlock / inline]
+    D --> E[SchemaSanitizer\nMaps illegal chars & reserved names]
+    E --> F[ExtensionFactory\nGenerates dynamic Tiptap extensions]
+    F --> G[modelToTiptap\nConverts AST to Tiptap JSONContent]
+    G --> H[XmlEditor\nTiptap Rich-Text Page + VSCode Tree]
+    H -->|User edits text, headings, lists, marks| I[tiptapToModel\nConverts JSONContent to AST]
+    I --> J[astToXml\nGenerates clean, well-formed XML]
+    J --> K[Download XML Button]
 ```
 
-| Category | Elements |
-|---|---|
-| Root | `<article>` |
-| Block | `<title>`, `<section>`, `<heading>`, `<paragraph>`, `<bullet-list>`, `<ordered-list>`, `<list-item>` |
-| Inline | `<bold>`, `<italic>`, `<underline>`, `<link href="...">` |
-| Attributes | `id` on `<article>`, `<section>`; `level` on `<heading>` |
+### Architectural Constraints
+- **Parser Layer (`src/xml/parser/`)**: Syntax only via `fast-xml-parser`. Never imports editor or state logic.
+- **AST Layer (`src/document-model/`)**: Framework-agnostic recursive node definitions (`XmlElement`, `XmlText`).
+- **Schema Layer (`src/editor/schema/`)**: Dynamic discovery and sanitization layer that shields ProseMirror from illegal names.
+- **Extension Layer (`src/editor/extensions/`)**: Dynamically manufactures ProseMirror node specs and combines them with standard Tiptap extensions.
+- **Adapters (`model-to-tiptap/` & `tiptap-to-model/`)**: Isolate Tiptap JSON schema details from the canonical XML AST.
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
-src/
-├── document-model/
-│   ├── types.ts              # Canonical model — zero external imports
-│   └── index.ts
-│
-├── xml/
-│   ├── parser/
-│   │   └── parseXml.ts       # fast-xml-parser wrapper (syntax only)
-│   ├── validation/
-│   │   └── validateXml.ts    # Structural validation with specific errors
-│   ├── xml-to-model/
-│   │   └── xmlToModel.ts     # Parsed XML → DocumentModel
-│   └── model-to-xml/
-│       └── modelToXml.ts     # DocumentModel → XML string
-│
-├── editor/
-│   ├── extensions/
-│   │   ├── nodes.ts          # Custom Tiptap node extensions
-│   │   └── marks.ts          # Bold, Italic, Underline, Link
-│   ├── model-to-tiptap/
-│   │   └── modelToTiptap.ts  # DocumentModel → Tiptap JSON
-│   └── tiptap-to-model/
-│       └── tiptapToModel.ts  # Tiptap JSON → DocumentModel
-│
-├── components/
-│   ├── Editor/XmlEditor.tsx
-│   ├── Toolbar/Toolbar.tsx
-│   ├── FileUpload/FileUpload.tsx
-│   ├── Export/ExportXml.tsx
-│   └── ValidationError/ValidationError.tsx
-│
-├── state/
-│   └── useDocumentState.ts   # React useState — no Redux/Zustand
-│
-├── __tests__/
-│   ├── roundTrip.test.ts     # 21 core round-trip tests
-│   └── styleDiagnostic.test.ts  # 11 style-preservation tests
-│
-├── App.tsx                   # Layout only — no business logic
-└── main.tsx
-
-sample/
-└── article.xml               # Full sample with all supported elements
+xml_author/
+├── sample/                             # Diverse sample XMLs for testing
+│   ├── api-reference.xml               # REST API documentation
+│   ├── book-technical.xml              # 5-level nested book with sections
+│   ├── hr-policy.xml                   # Legal policy document
+│   ├── research-paper.xml              # Academic paper with citations & abstract
+│   ├── training-course.xml             # Educational curriculum with modules & labs
+│   └── user-manual.xml                 # Camera user manual with controls & steps
+├── src/
+│   ├── components/
+│   │   ├── DocumentTree/               # VS Code-style collapsible hierarchy tree
+│   │   ├── Editor/                     # Tiptap paper canvas editor wrapper
+│   │   ├── ErrorBoundary/              # Editor error boundary with friendly fallback
+│   │   ├── Export/                     # XML download button
+│   │   ├── FileUpload/                 # XML file reader & pipeline driver
+│   │   ├── StatusBar/                  # Bottom metrics & document info bar
+│   │   ├── Toolbar/                    # Word-like ribbon (styles, formatting, lists, link)
+│   │   └── ValidationError/            # Parse error banner
+│   ├── document-model/
+│   │   └── GenericAst.ts               # Universal recursive AST interfaces
+│   ├── editor/
+│   │   ├── extensions/
+│   │   │   └── ExtensionFactory.ts     # Dynamic ProseMirror node generator
+│   │   ├── model-to-tiptap/            # AST → Tiptap JSONContent adapter
+│   │   ├── schema/
+│   │   │   ├── SchemaDiscoverer.ts     # Structural tag classifier
+│   │   │   └── SchemaSanitizer.ts      # Name cleaning & bidirectional mapping
+│   │   └── tiptap-to-model/            # Tiptap JSONContent → AST adapter
+│   ├── hooks/
+│   │   └── useSidebarResize.ts         # Sidebar drag-to-resize & collapse hook
+│   ├── state/
+│   │   └── useDocumentState.ts         # Global document state
+│   ├── xml/
+│   │   ├── model-to-xml/               # AST → XML string serializer
+│   │   ├── parser/                     # fast-xml-parser wrapper
+│   │   └── xml-to-model/               # Parsed objects → Generic AST
+│   ├── App.tsx                         # Main app shell & panel layout
+│   ├── index.css                       # Catppuccin / Google Docs paper styling
+│   └── main.tsx                        # Entry point
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
 ```
 
 ---
 
-## Getting Started
+## 🛠️ Getting Started
 
 ### Prerequisites
+- [Node.js](https://nodejs.org/) (version 18+ recommended)
+- `npm`
 
-- Node.js 18+
-- npm 9+
-
-### Install
-
+### Installation
 ```bash
 git clone https://github.com/sankha4567/xml_authoring.git
 cd xml_authoring
 npm install
 ```
 
-### Development
-
+### Development Server
 ```bash
 npm run dev
 ```
-
-Opens at **http://localhost:5173**
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ### Production Build
-
 ```bash
 npm run build
 ```
-
-### Run Tests
-
-```bash
-npm run test           # Run all tests (32 tests)
-npm run test:ui        # Open Vitest UI
-```
+Creates an optimized production bundle in `dist/`.
 
 ---
 
-## Usage
+## 🧪 Testing with Sample Files
 
-1. Click **Upload XML** and select an `.xml` file
-2. The document is validated and rendered in the rich-text editor
-3. Edit using the toolbar:
-   - **B / I / U** — Bold, Italic, Underline
-   - **H2 / H3** — Headings (press Enter at end to exit to paragraph)
-   - **• List / 1. List** — Bullet and ordered lists (Enter = new item)
-   - **Link / Unlink** — Insert or remove hyperlinks (click a link to open it)
-4. Click **Download XML** to export the edited document
+Try uploading the files located in the [`sample/`](sample/) directory:
 
-### Sample Document
-
-A full sample XML is included at [`sample/article.xml`](sample/article.xml) demonstrating all supported elements.
+| Sample File | Primary Tags | Key Characteristic |
+|---|---|---|
+| `book-technical.xml` | `book`, `chapter`, `section`, `subsection` | Deeply nested 5-level hierarchy |
+| `hr-policy.xml` | `policy-document`, `clause`, `critical-warning` | Hyphenated enterprise tag names |
+| `api-reference.xml` | `endpoint`, `field`, `request`, `response` | Technical specifications |
+| `research-paper.xml` | `front-matter`, `abstract`, `finding`, `citation` | Academic structure with citations |
+| `user-manual.xml` | `chapter`, `step`, `control`, `caution`, `problem` | Numbered steps and troubleshooting |
+| `training-course.xml` | `module`, `lesson`, `topic`, `metric`, `lab` | Educational curriculum |
 
 ---
 
-## Validation Errors
-
-The validator produces specific, actionable errors before opening the editor:
-
-| Condition | Error Message |
-|---|---|
-| Bad XML syntax | `Invalid XML syntax: <parser message>` |
-| Wrong root element | `Unsupported document: root element must be <article>` |
-| Missing title | `Invalid document: <article> requires <title>` |
-| Unknown element | `Unsupported XML element: <foo>` |
-| Invalid child | `Unsupported structure: <section> cannot contain <foo>` |
-
----
-
-## Tech Stack
-
-| Technology | Role |
-|---|---|
-| [React 18](https://react.dev) | UI framework |
-| [TypeScript](https://www.typescriptlang.org) | Strict type safety |
-| [Vite](https://vite.dev) | Build tool & dev server |
-| [Tiptap](https://tiptap.dev) | Rich-text editor (ProseMirror-based) |
-| [fast-xml-parser](https://github.com/NaturalIntelligence/fast-xml-parser) | XML parsing |
-| [Vitest](https://vitest.dev) | Unit & round-trip testing |
-| Plain CSS | Styling (no Tailwind) |
-
----
-
-## Testing
-
-32 tests cover the full round-trip pipeline:
-
-```
-XML → parseXml → validateXml → xmlToModel
-    → modelToTiptap → tiptapToModel → modelToXml
-```
-
-### Test Cases
-
-| # | Case |
-|---|---|
-| 1 | Plain paragraph |
-| 2 | Bold text |
-| 3 | Italic text |
-| 4 | Underline text |
-| 5 | Nested bold+italic |
-| 6 | Link with href |
-| 7 | Heading level 2 (default) |
-| 8 | Heading level 3 |
-| 9 | Section id attribute |
-| 10 | Bullet lists |
-| 11 | Ordered lists |
-| 12 | Multiple sections |
-| 13 | XML attributes preserved |
-| 14 | Special characters (`&amp;`, `&lt;`) |
-| 15 | Unicode text |
-| 16 | Multi-line XML whitespace normalization |
-| 17 | Invalid XML syntax |
-| 18 | Unsupported elements |
-| 19 | Wrong root element |
-| 20 | Missing title |
-| 21+ | Style preservation diagnostics |
-
----
-
-## Roadmap
-
-This is a **Phase 1 MVP**. The architecture is designed to support:
-
-- [ ] DOCX export (same Internal Model → different serializer)
-- [ ] PDF export
-- [ ] Monaco-based raw XML source editor (synced with visual editor via model)
-- [ ] Larger XML vocabularies / custom schemas
-- [ ] Collaboration (Yjs / WebRTC)
-- [ ] Version history
-
----
-
-## License
-
+## 📄 License
 MIT

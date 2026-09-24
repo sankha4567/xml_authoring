@@ -1,26 +1,23 @@
 /**
  * Export Component — Download XML button
  *
- * Uses the current DocumentModel from state to produce XML and download it.
- * Flow: DocumentModel → modelToXml() → Blob → Object URL → download
- *
- * No Tiptap logic here.
+ * Uses the generic astToXml function.
  */
 
 import React from 'react';
-import { modelToXml } from '../../xml/model-to-xml/modelToXml';
-import type { DocumentModel } from '../../document-model/types';
+import { astToXml } from '../../xml/model-to-xml/modelToXml';
+import type { XmlElement } from '../../document-model/GenericAst';
 
 interface ExportXmlProps {
-  model: DocumentModel | null;
+  ast: XmlElement | null;
   fileName: string | null;
 }
 
-export const ExportXml: React.FC<ExportXmlProps> = ({ model, fileName }) => {
+export const ExportXml: React.FC<ExportXmlProps> = ({ ast, fileName }) => {
   const handleDownload = () => {
-    if (!model) return;
+    if (!ast) return;
 
-    const xmlString = modelToXml(model);
+    const xmlString = astToXml(ast);
     const blob = new Blob([xmlString], { type: 'application/xml' });
     const url = URL.createObjectURL(blob);
 
@@ -39,8 +36,8 @@ export const ExportXml: React.FC<ExportXmlProps> = ({ model, fileName }) => {
     <button
       className="btn btn-secondary"
       onClick={handleDownload}
-      disabled={!model}
-      title={!model ? 'Upload an XML file first' : 'Download as XML'}
+      disabled={!ast}
+      title={!ast ? 'Upload an XML file first' : 'Download as XML'}
     >
       Download XML
     </button>

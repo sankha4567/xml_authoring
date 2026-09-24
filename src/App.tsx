@@ -1,8 +1,6 @@
 /**
  * App — Root component
- *
- * Layout only. All business logic delegated to hooks and xml/ layer.
- * No XML parsing or serialization here.
+ * VSCode-style layout: header | sidebar + editor panel | status bar
  */
 
 import React, { useState } from 'react';
@@ -13,97 +11,146 @@ import { FileUpload } from './components/FileUpload/FileUpload';
 import { ExportXml } from './components/Export/ExportXml';
 import { ValidationError } from './components/ValidationError/ValidationError';
 import { XmlEditor } from './components/Editor/XmlEditor';
-import type { DocumentModel } from './document-model/types';
+import { EditorErrorBoundary } from './components/ErrorBoundary/EditorErrorBoundary';
+import { DocumentTree } from './components/DocumentTree/DocumentTree';
+import { StatusBar } from './components/StatusBar/StatusBar';
+import { useSidebarResize } from './hooks/useSidebarResize';
+import type { XmlElement } from './document-model/GenericAst';
+import type { SanitizedTag } from './editor/schema/SchemaSanitizer';
 
 export const App: React.FC = () => {
   const [state, actions] = useDocumentState();
   const [tiptapContent, setTiptapContent] = useState<JSONContent | null>(null);
+  const { width, collapsed, toggle, onMouseDown } = useSidebarResize();
 
-  const handleUploadSuccess = (model: DocumentModel, fileName: string) => {
-    const tiptapJson = modelToTiptap(model);
+  const handleUploadSuccess = (
+    ast: XmlElement,
+    schema: SanitizedTag[],
+    tagToPm: Map<string, string>,
+    pmToTag: Map<string, string>,
+    fileName: string
+  ) => {
+    const tiptapJson = modelToTiptap(ast, tagToPm);
     setTiptapContent(tiptapJson);
-    actions.setDocumentModel(model, fileName);
+    actions.setDocumentData(ast, schema, tagToPm, pmToTag, fileName);
   };
 
-  const handleUploadError = (messages: string[]) => {
-    actions.setValidationError(messages);
-  };
-
-  const handleModelChange = (model: DocumentModel) => {
-    // Update canonical model on every Tiptap edit
-    if (state.fileName) {
-      actions.setDocumentModel(model, state.fileName);
-    }
-  };
-
-  const handleDismissError = () => {
-    actions.reset();
-  };
+  const handleUploadError = (messages: string[]) => actions.setValidationError(messages);
+  const handleAstChange = (ast: XmlElement) => actions.updateDocumentAst(ast);
+  const handleDismissError = () => actions.reset();
+  const handleEditorCrash = () => actions.reset();
 
   return (
     <div className="app">
-      {/* Header */}
+      {/* ── Header ── */}
       <header className="app-header">
         <div className="app-header-brand">
+          {/* Sidebar toggle button */}
+          <button
+            className="sidebar-toggle-btn"
+            onClick={toggle}
+            title={collapsed ? 'Show Explorer (Ctrl+B)' : 'Hide Explorer (Ctrl+B)'}
+            aria-label="Toggle sidebar"
+          >
+            {collapsed ? '⟩' : '⟨'}
+          </button>
           <span className="app-logo">✦</span>
           <div>
             <h1 className="app-title">XML Author</h1>
-            <p className="app-subtitle">XML → Model → Tiptap → Model → XML</p>
+            <p className="app-subtitle">Dynamic XML Authoring Engine</p>
           </div>
         </div>
-
         <div className="app-header-actions">
-          <FileUpload
-            onSuccess={handleUploadSuccess}
-            onError={handleUploadError}
-          />
-          <ExportXml
-            model={state.currentDocumentModel}
-            fileName={state.fileName}
-          />
+          <FileUpload onSuccess={handleUploadSuccess} onError={handleUploadError} />
+          <ExportXml ast={state.currentDocumentAst} fileName={state.fileName} />
         </div>
       </header>
 
-      {/* File info strip */}
-      {state.fileName && state.validationState === 'valid' && (
-        <div className="file-info-bar">
-          <span className="file-info-icon">📄</span>
-          <span className="file-info-name">{state.fileName}</span>
-          <span className="file-info-badge">Ready</span>
-        </div>
-      )}
+      {/* ── Body: sidebar + editor ── */}
+      <div className="app-body">
 
-      {/* Main content */}
-      <main className="app-main">
-        {/* Validation errors */}
-        {state.validationState === 'error' && (
-          <ValidationError
-            messages={state.errorMessages}
-            onDismiss={handleDismissError}
-          />
+        {/* Left Sidebar */}
+        {!collapsed && (
+          <>
+            <aside
+              className="sidebar"
+              style={{ width: `${width}px` }}
+              aria-label="Document Explorer"
+            >
+              {/* Sidebar Header */}
+              <div className="sidebar-header">
+                <span>EXPLORER</span>
+                {state.fileName && (
+                  <span className="sidebar-filename">{state.fileName}</span>
+                )}
+              </div>
+
+              {/* Document Tree */}
+              <div className="sidebar-content">
+                {state.validationState === 'error' ? (
+                  <div className="tree-empty tree-empty--error">
+                    <span>⚠ Parse error</span>
+                  </div>
+                ) : (
+                  <DocumentTree ast={state.currentDocumentAst} />
+                )}
+              </div>
+
+              {/* Schema info footer */}
+              {state.discoveredSchema && (
+                <div className="sidebar-footer">
+                  <span className="sidebar-schema-label">
+                    {state.discoveredSchema.length} tag types discovered
+                  </span>
+                </div>
+              )}
+            </aside>
+
+            {/* Drag resize handle */}
+            <div
+              className="sidebar-resize-handle"
+              onMouseDown={onMouseDown}
+              title="Drag to resize"
+              aria-hidden
+            />
+          </>
         )}
 
-        {/* Editor */}
-        {state.editorReady && tiptapContent ? (
-          <XmlEditor
-            initialContent={tiptapContent}
-            onModelChange={handleModelChange}
-          />
-        ) : state.validationState === 'idle' ? (
-          <div className="empty-state">
-            <div className="empty-state-icon">📂</div>
-            <h2>No document loaded</h2>
-            <p>Upload an XML file to begin authoring.</p>
-            <p className="empty-state-hint">
-              Supported elements: <code>article</code>, <code>section</code>,{' '}
-              <code>paragraph</code>, <code>heading</code>,{' '}
-              <code>bullet-list</code>, <code>ordered-list</code>,{' '}
-              <code>bold</code>, <code>italic</code>, <code>underline</code>,{' '}
-              <code>link</code>
-            </p>
-          </div>
-        ) : null}
-      </main>
+        {/* Right Editor Panel */}
+        <main className="editor-panel">
+          {state.validationState === 'error' && (
+            <ValidationError messages={state.errorMessages} onDismiss={handleDismissError} />
+          )}
+
+          {state.editorReady && tiptapContent && state.discoveredSchema && state.pmToTag ? (
+            <EditorErrorBoundary onDismiss={handleEditorCrash}>
+              <XmlEditor
+                key={state.fileName}
+                initialContent={tiptapContent}
+                schema={state.discoveredSchema}
+                pmToTag={state.pmToTag}
+                onModelChange={handleAstChange}
+              />
+            </EditorErrorBoundary>
+          ) : state.validationState === 'idle' ? (
+            <div className="empty-state">
+              <div className="empty-state-icon">📂</div>
+              <h2>No document loaded</h2>
+              <p>Upload any XML file to begin authoring.</p>
+              <p className="empty-state-hint">
+                Any tag names · Any nesting depth · Any structure
+              </p>
+            </div>
+          ) : null}
+        </main>
+      </div>
+
+      {/* ── Status Bar ── */}
+      <StatusBar
+        ast={state.currentDocumentAst}
+        fileName={state.fileName}
+        schema={state.discoveredSchema}
+      />
     </div>
   );
 };
