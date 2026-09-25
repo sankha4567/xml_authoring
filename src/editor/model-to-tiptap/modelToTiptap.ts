@@ -21,7 +21,13 @@ export function modelToTiptap(
 function convertNode(node: XmlNode, tagToPm: Map<string, string>): JSONContent | null {
   if (node.type === 'text') {
     if (!node.text.trim()) return null; // skip pure-whitespace text nodes
-    const marks = node.marks?.map(m => ({ type: m })) || [];
+    const marks = node.marks?.map(m => {
+      let tiptapType = m;
+      if (m === 'strong' || m === 'b') tiptapType = 'bold';
+      else if (m === 'em' || m === 'i') tiptapType = 'italic';
+      else if (m === 'u') tiptapType = 'underline';
+      return { type: tiptapType, attrs: { origTag: m } };
+    }) || [];
     return {
       type: 'text',
       text: node.text,
@@ -58,6 +64,11 @@ function convertElement(node: XmlElement, tagToPm: Map<string, string>): JSONCon
   const pmName = tagToPm.get(node.tag) ?? node.tag;
 
   const result: JSONContent = { type: pmName };
+  const hasCdata = node.children.some(c => c.type === 'text' && c.isCdata);
+  const elementXmlAttrs: Record<string, string> = {
+    ...(node.attrs || {}),
+    ...(hasCdata ? { _isCdata: 'true' } : {}),
+  };
 
   if (pmName === 'heading') {
     const rawLevel = Number(node.attrs?.level || (node.tag.toLowerCase() === 'h2' ? 2 : node.tag.toLowerCase() === 'h3' ? 3 : 1));
@@ -65,12 +76,12 @@ function convertElement(node: XmlElement, tagToPm: Map<string, string>): JSONCon
     result.attrs = {
       level: Math.min(Math.max(rawLevel, 1), 3),
       xmlAttrs: {
-        ...(node.attrs || {}),
+        ...elementXmlAttrs,
         _hadLevelAttr: hadLevelAttr ? 'true' : 'false',
       },
     };
-  } else if (node.attrs && Object.keys(node.attrs).length > 0) {
-    result.attrs = { xmlAttrs: node.attrs };
+  } else if (Object.keys(elementXmlAttrs).length > 0) {
+    result.attrs = { xmlAttrs: elementXmlAttrs };
   }
 
   let children = node.children

@@ -34,6 +34,42 @@ interface XmlEditorProps {
   onModelChange: (ast: XmlElement) => void;
 }
 
+const CustomBold = Bold.extend({
+  addAttributes() {
+    return {
+      origTag: {
+        default: 'bold',
+        parseHTML: (el: HTMLElement) => el.getAttribute('data-orig-tag') || 'bold',
+        renderHTML: (attrs: Record<string, any>) => attrs.origTag ? { 'data-orig-tag': attrs.origTag } : {},
+      },
+    };
+  },
+});
+
+const CustomItalic = Italic.extend({
+  addAttributes() {
+    return {
+      origTag: {
+        default: 'italic',
+        parseHTML: (el: HTMLElement) => el.getAttribute('data-orig-tag') || 'italic',
+        renderHTML: (attrs: Record<string, any>) => attrs.origTag ? { 'data-orig-tag': attrs.origTag } : {},
+      },
+    };
+  },
+});
+
+const CustomUnderline = Underline.extend({
+  addAttributes() {
+    return {
+      origTag: {
+        default: 'underline',
+        parseHTML: (el: HTMLElement) => el.getAttribute('data-orig-tag') || 'underline',
+        renderHTML: (attrs: Record<string, any>) => attrs.origTag ? { 'data-orig-tag': attrs.origTag } : {},
+      },
+    };
+  },
+});
+
 export const XmlEditor: React.FC<XmlEditorProps> = ({
   initialContent,
   schema,
@@ -53,9 +89,9 @@ export const XmlEditor: React.FC<XmlEditorProps> = ({
     OrderedList,
     ListItem,
     Text,
-    Bold,
-    Italic,
-    Underline,
+    CustomBold,
+    CustomItalic,
+    CustomUnderline,
     Link.configure({
       openOnClick: false,
       HTMLAttributes: {

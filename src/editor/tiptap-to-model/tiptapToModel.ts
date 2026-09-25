@@ -30,7 +30,7 @@ function convertNode(json: JSONContent, pmToTag: Map<string, string>): XmlNode |
     const linkMark = json.marks?.find((m: any) => m.type === 'link');
     const otherMarks = json.marks
       ?.filter((m: any) => m.type !== 'link')
-      .map((m: any) => m.type) || [];
+      .map((m: any) => m.attrs?.origTag || m.type) || [];
 
     const textNode: XmlNode = {
       type: 'text',
@@ -75,8 +75,10 @@ function convertNode(json: JSONContent, pmToTag: Map<string, string>): XmlNode |
     }
   }
 
+  const isCdata = rawAttrs._isCdata === 'true';
   delete attrs._synthetic;
   delete attrs._hadLevelAttr;
+  delete attrs._isCdata;
 
   let children: XmlNode[] = [];
   if (json.content) {
@@ -87,12 +89,18 @@ function convertNode(json: JSONContent, pmToTag: Map<string, string>): XmlNode |
         if (child.content) {
           for (const inner of child.content) {
             const converted = convertNode(inner, pmToTag);
-            if (converted) children.push(converted);
+            if (converted) {
+              if (isCdata && converted.type === 'text') converted.isCdata = true;
+              children.push(converted);
+            }
           }
         }
       } else {
         const converted = convertNode(child, pmToTag);
-        if (converted) children.push(converted);
+        if (converted) {
+          if (isCdata && converted.type === 'text') converted.isCdata = true;
+          children.push(converted);
+        }
       }
     }
   }

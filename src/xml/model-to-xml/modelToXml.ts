@@ -15,6 +15,16 @@ export function astToXml(root: XmlElement): string {
 
 function serializeNode(node: XmlNode, depth: number, out: string[]) {
   if (node.type === 'text') {
+    if (node.isCdata) {
+      const cdataText = `<![CDATA[${node.text}]]>`;
+      if (out.length > 0) {
+        out[out.length - 1] += cdataText;
+      } else {
+        out.push(cdataText);
+      }
+      return;
+    }
+
     let text = escapeXml(node.text);
     if (node.marks && node.marks.length > 0) {
       for (const mark of node.marks) {
@@ -69,7 +79,7 @@ function serializeNode(node: XmlNode, depth: number, out: string[]) {
 
 // Simple heuristic for neat XML output formatting.
 // (Doesn't affect parsing, just makes the raw XML readable).
-const INLINE_GUESSES = new Set(['bold', 'italic', 'underline', 'link', 'b', 'i', 'u', 'span', 'a']);
+const INLINE_GUESSES = new Set(['bold', 'italic', 'underline', 'link', 'b', 'i', 'u', 'span', 'a', 'strong', 'em']);
 function isInlineTag(tag: string): boolean {
   return INLINE_GUESSES.has(tag);
 }

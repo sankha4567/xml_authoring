@@ -13,6 +13,7 @@ export interface XmlText {
   type: 'text';
   text: string;
   marks?: string[]; // Array of inline formatting tags applied to this text (e.g., ['bold', 'italic'])
+  isCdata?: boolean;
 }
 
 export interface XmlElement {

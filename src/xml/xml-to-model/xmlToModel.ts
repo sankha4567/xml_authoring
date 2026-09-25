@@ -57,13 +57,13 @@ export function xmlToAst(nodes: ParsedXmlArray): XmlElement {
 
 const FORMATTING_MARKS: Record<string, string> = {
   bold: 'bold',
-  b: 'bold',
-  strong: 'bold',
+  b: 'b',
+  strong: 'strong',
   italic: 'italic',
-  i: 'italic',
-  em: 'italic',
+  i: 'i',
+  em: 'em',
   underline: 'underline',
-  u: 'underline',
+  u: 'u',
 };
 
 function convertElement(node: ParsedXmlObject, tag: string): XmlElement {
@@ -74,6 +74,23 @@ function convertElement(node: ParsedXmlObject, tag: string): XmlElement {
     const childTag = getTagName(child);
 
     if (childTag === '#comment') continue;
+
+    if (childTag === '#cdata' || childTag === '__cdata') {
+      const cdataChildren = getChildren(child, childTag);
+      let cdataText = '';
+      for (const cc of cdataChildren) {
+        const ccTag = getTagName(cc);
+        if (ccTag === '#text' || ccTag === null) {
+          cdataText += String(ccTag === null ? '' : (cc[ccTag] ?? ''));
+        }
+      }
+      children.push({
+        type: 'text',
+        text: cdataText,
+        isCdata: true,
+      });
+      continue;
+    }
 
     if (childTag === '#text' || childTag === null) {
       // Normalize whitespace like professional XML editors: 

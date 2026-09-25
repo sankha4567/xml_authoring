@@ -1,0 +1,1401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document
+    xmlns="http://example.com/document"
+    xmlns:meta="http://example.com/metadata"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    id="DOC-2026-0001"
+    version="3.4"
+    status="draft"
+    language="en-US">
+
+    <!-- ========================================================= -->
+    <!-- DOCUMENT METADATA                                         -->
+    <!-- ========================================================= -->
+
+    <meta:metadata>
+
+        <meta:identifier type="uuid">
+            550e8400-e29b-41d4-a716-446655440000
+        </meta:identifier>
+
+        <meta:title>
+            Enterprise Software Architecture and Engineering Guide
+        </meta:title>
+
+        <meta:description>
+            A comprehensive technical document describing the architecture,
+            implementation, deployment, security, monitoring, and maintenance
+            of a modern enterprise software platform.
+        </meta:description>
+
+        <meta:classification>
+            INTERNAL
+        </meta:classification>
+
+        <meta:created>
+            2026-01-15T09:30:00Z
+        </meta:created>
+
+        <meta:modified>
+            2026-09-20T16:45:00Z
+        </meta:modified>
+
+        <meta:authors>
+
+            <meta:author id="AUTH-001">
+                <meta:name>
+                    John Anderson
+                </meta:name>
+
+                <meta:role>
+                    Principal Software Architect
+                </meta:role>
+
+                <meta:organization>
+                    Example Technologies
+                </meta:organization>
+
+                <meta:contact>
+                    john.anderson@example.com
+                </meta:contact>
+            </meta:author>
+
+            <meta:author id="AUTH-002">
+                <meta:name>
+                    Sarah Williams
+                </meta:name>
+
+                <meta:role>
+                    Senior Platform Engineer
+                </meta:role>
+
+                <meta:organization>
+                    Example Technologies
+                </meta:organization>
+
+                <meta:contact>
+                    sarah.williams@example.com
+                </meta:contact>
+            </meta:author>
+
+        </meta:authors>
+
+        <meta:keywords>
+
+            <meta:keyword>
+                software architecture
+            </meta:keyword>
+
+            <meta:keyword>
+                microservices
+            </meta:keyword>
+
+            <meta:keyword>
+                cloud computing
+            </meta:keyword>
+
+            <meta:keyword>
+                distributed systems
+            </meta:keyword>
+
+            <meta:keyword>
+                security
+            </meta:keyword>
+
+            <meta:keyword>
+                observability
+            </meta:keyword>
+
+        </meta:keywords>
+
+    </meta:metadata>
+
+
+    <!-- ========================================================= -->
+    <!-- EXECUTIVE SUMMARY                                         -->
+    <!-- ========================================================= -->
+
+    <section id="executive-summary" type="overview">
+
+        <title>
+            Executive Summary
+        </title>
+
+        <paragraph>
+            This document defines the architecture and engineering practices
+            used to build a scalable enterprise software platform.
+        </paragraph>
+
+        <paragraph>
+            The platform is designed to support
+            <strong>high availability</strong>,
+            <em>horizontal scalability</em>,
+            and secure communication between distributed services.
+        </paragraph>
+
+        <paragraph>
+            The architecture follows a modular approach where individual
+            services can evolve independently while maintaining stable
+            contracts between system boundaries.
+        </paragraph>
+
+        <list type="unordered">
+
+            <item id="summary-1">
+                <paragraph>
+                    Services are independently deployable.
+                </paragraph>
+            </item>
+
+            <item id="summary-2">
+                <paragraph>
+                    APIs use versioned contracts.
+                </paragraph>
+            </item>
+
+            <item id="summary-3">
+                <paragraph>
+                    Data access is isolated behind service boundaries.
+                </paragraph>
+            </item>
+
+            <item id="summary-4">
+                <paragraph>
+                    Security controls are applied at multiple layers.
+                </paragraph>
+            </item>
+
+            <item id="summary-5">
+                <paragraph>
+                    Observability is built into every production service.
+                </paragraph>
+            </item>
+
+        </list>
+
+    </section>
+
+
+    <!-- ========================================================= -->
+    <!-- SYSTEM ARCHITECTURE                                       -->
+    <!-- ========================================================= -->
+
+    <section
+        id="architecture"
+        type="technical"
+        importance="high">
+
+        <title>
+            System Architecture
+        </title>
+
+        <paragraph>
+            The platform consists of multiple independently deployable
+            services connected through well-defined APIs and asynchronous
+            messaging infrastructure.
+        </paragraph>
+
+
+        <section id="architecture-overview">
+
+            <title>
+                Architecture Overview
+            </title>
+
+            <paragraph>
+                The system follows a layered architecture consisting of
+                presentation, application, domain, infrastructure, and
+                data layers.
+            </paragraph>
+
+            <architecture-diagram
+                id="diagram-001"
+                format="logical">
+
+                <component
+                    id="frontend"
+                    type="web-application"
+                    technology="React">
+
+                    <name>
+                        Web Application
+                    </name>
+
+                    <responsibilities>
+
+                        <responsibility>
+                            User interface rendering
+                        </responsibility>
+
+                        <responsibility>
+                            Client-side state management
+                        </responsibility>
+
+                        <responsibility>
+                            API communication
+                        </responsibility>
+
+                    </responsibilities>
+
+                </component>
+
+
+                <component
+                    id="api-gateway"
+                    type="gateway"
+                    technology="Node.js">
+
+                    <name>
+                        API Gateway
+                    </name>
+
+                    <responsibilities>
+
+                        <responsibility>
+                            Authentication
+                        </responsibility>
+
+                        <responsibility>
+                            Authorization
+                        </responsibility>
+
+                        <responsibility>
+                            Request routing
+                        </responsibility>
+
+                        <responsibility>
+                            Rate limiting
+                        </responsibility>
+
+                    </responsibilities>
+
+                </component>
+
+
+                <component
+                    id="service-layer"
+                    type="microservice-platform">
+
+                    <name>
+                        Service Layer
+                    </name>
+
+                    <services>
+
+                        <service
+                            id="identity-service"
+                            version="2.1"
+                            criticality="high">
+
+                            <name>
+                                Identity Service
+                            </name>
+
+                            <description>
+                                Responsible for authentication,
+                                authorization, sessions, and user identity.
+                            </description>
+
+                            <dependencies>
+
+                                <dependency>
+                                    PostgreSQL
+                                </dependency>
+
+                                <dependency>
+                                    Redis
+                                </dependency>
+
+                            </dependencies>
+
+                        </service>
+
+
+                        <service
+                            id="user-service"
+                            version="3.2"
+                            criticality="medium">
+
+                            <name>
+                                User Service
+                            </name>
+
+                            <description>
+                                Manages user profiles and preferences.
+                            </description>
+
+                            <dependencies>
+
+                                <dependency>
+                                    Identity Service
+                                </dependency>
+
+                                <dependency>
+                                    PostgreSQL
+                                </dependency>
+
+                            </dependencies>
+
+                        </service>
+
+
+                        <service
+                            id="order-service"
+                            version="5.0"
+                            criticality="high">
+
+                            <name>
+                                Order Service
+                            </name>
+
+                            <description>
+                                Handles order creation, modification,
+                                processing, and lifecycle management.
+                            </description>
+
+                            <dependencies>
+
+                                <dependency>
+                                    User Service
+                                </dependency>
+
+                                <dependency>
+                                    Payment Service
+                                </dependency>
+
+                                <dependency>
+                                    Inventory Service
+                                </dependency>
+
+                                <dependency>
+                                    Kafka
+                                </dependency>
+
+                            </dependencies>
+
+                        </service>
+
+
+                        <service
+                            id="payment-service"
+                            version="4.8"
+                            criticality="critical">
+
+                            <name>
+                                Payment Service
+                            </name>
+
+                            <description>
+                                Processes financial transactions and
+                                communicates with external payment providers.
+                            </description>
+
+                            <dependencies>
+
+                                <dependency>
+                                    PostgreSQL
+                                </dependency>
+
+                                <dependency>
+                                    External Payment Provider
+                                </dependency>
+
+                            </dependencies>
+
+                        </service>
+
+
+                        <service
+                            id="notification-service"
+                            version="2.7"
+                            criticality="medium">
+
+                            <name>
+                                Notification Service
+                            </name>
+
+                            <description>
+                                Sends email, SMS, and push notifications.
+                            </description>
+
+                            <dependencies>
+
+                                <dependency>
+                                    Kafka
+                                </dependency>
+
+                                <dependency>
+                                    Redis
+                                </dependency>
+
+                            </dependencies>
+
+                        </service>
+
+                    </services>
+
+                </component>
+
+            </architecture-diagram>
+
+
+            <section id="service-communication">
+
+                <title>
+                    Service Communication
+                </title>
+
+                <paragraph>
+                    Services communicate using synchronous REST APIs for
+                    request-response operations and asynchronous messaging
+                    for event-driven workflows.
+                </paragraph>
+
+                <communication-model>
+
+                    <channel
+                        id="rest"
+                        protocol="HTTPS"
+                        version="1.1">
+
+                        <description>
+                            Used for synchronous client and service requests.
+                        </description>
+
+                    </channel>
+
+                    <channel
+                        id="events"
+                        protocol="Kafka"
+                        version="3.7">
+
+                        <description>
+                            Used for asynchronous domain events.
+                        </description>
+
+                    </channel>
+
+                </communication-model>
+
+            </section>
+
+        </section>
+
+
+        <!-- ===================================================== -->
+        <!-- DATA ARCHITECTURE                                     -->
+        <!-- ===================================================== -->
+
+        <section id="data-architecture">
+
+            <title>
+                Data Architecture
+            </title>
+
+            <paragraph>
+                The platform uses multiple storage technologies depending
+                on workload characteristics and consistency requirements.
+            </paragraph>
+
+
+            <database
+                id="primary-database"
+                type="relational"
+                vendor="PostgreSQL"
+                version="16">
+
+                <name>
+                    Primary PostgreSQL Database
+                </name>
+
+                <configuration>
+
+                    <property
+                        name="max_connections"
+                        value="500"/>
+
+                    <property
+                        name="connection_timeout"
+                        value="30"/>
+
+                    <property
+                        name="ssl"
+                        value="required"/>
+
+                </configuration>
+
+
+                <tables>
+
+                    <table name="users">
+
+                        <column
+                            name="id"
+                            type="UUID"
+                            nullable="false"
+                            primary-key="true"/>
+
+                        <column
+                            name="email"
+                            type="VARCHAR(255)"
+                            nullable="false"
+                            unique="true"/>
+
+                        <column
+                            name="created_at"
+                            type="TIMESTAMP"
+                            nullable="false"/>
+
+                        <column
+                            name="status"
+                            type="VARCHAR(50)"
+                            nullable="false"/>
+
+                    </table>
+
+
+                    <table name="orders">
+
+                        <column
+                            name="id"
+                            type="UUID"
+                            nullable="false"
+                            primary-key="true"/>
+
+                        <column
+                            name="user_id"
+                            type="UUID"
+                            nullable="false"/>
+
+                        <column
+                            name="status"
+                            type="VARCHAR(50)"
+                            nullable="false"/>
+
+                        <column
+                            name="total_amount"
+                            type="DECIMAL(18,2)"
+                            nullable="false"/>
+
+                        <column
+                            name="currency"
+                            type="CHAR(3)"
+                            nullable="false"/>
+
+                        <column
+                            name="created_at"
+                            type="TIMESTAMP"
+                            nullable="false"/>
+
+                    </table>
+
+
+                    <table name="order_items">
+
+                        <column
+                            name="id"
+                            type="UUID"
+                            nullable="false"
+                            primary-key="true"/>
+
+                        <column
+                            name="order_id"
+                            type="UUID"
+                            nullable="false"/>
+
+                        <column
+                            name="product_id"
+                            type="UUID"
+                            nullable="false"/>
+
+                        <column
+                            name="quantity"
+                            type="INTEGER"
+                            nullable="false"/>
+
+                        <column
+                            name="unit_price"
+                            type="DECIMAL(18,2)"
+                            nullable="false"/>
+
+                    </table>
+
+                </tables>
+
+            </database>
+
+
+            <cache
+                id="redis-cache"
+                vendor="Redis"
+                version="7">
+
+                <purpose>
+                    Distributed caching and session management.
+                </purpose>
+
+                <configuration>
+
+                    <property
+                        name="maxmemory"
+                        value="8gb"/>
+
+                    <property
+                        name="eviction-policy"
+                        value="allkeys-lru"/>
+
+                    <property
+                        name="tls"
+                        value="true"/>
+
+                </configuration>
+
+            </cache>
+
+        </section>
+
+    </section>
+
+
+    <!-- ========================================================= -->
+    <!-- API DESIGN                                                -->
+    <!-- ========================================================= -->
+
+    <section
+        id="api-design"
+        type="technical">
+
+        <title>
+            API Design
+        </title>
+
+        <paragraph>
+            All public APIs follow a versioned REST contract and return
+            structured JSON responses.
+        </paragraph>
+
+
+        <api
+            id="user-api"
+            version="v1"
+            base-url="https://api.example.com/v1/users">
+
+            <endpoint
+                id="get-user"
+                method="GET"
+                path="/{userId}">
+
+                <description>
+                    Returns information about a specific user.
+                </description>
+
+                <parameters>
+
+                    <parameter
+                        name="userId"
+                        location="path"
+                        type="UUID"
+                        required="true">
+
+                        <description>
+                            Unique identifier of the user.
+                        </description>
+
+                    </parameter>
+
+                </parameters>
+
+                <responses>
+
+                    <response
+                        status="200"
+                        description="Successful response">
+
+                        <example>
+                            <![CDATA[
+                            {
+                                "id": "550e8400-e29b-41d4-a716-446655440000",
+                                "email": "user@example.com",
+                                "status": "active"
+                            }
+                            ]]>
+                        </example>
+
+                    </response>
+
+                    <response
+                        status="404"
+                        description="User not found"/>
+
+                    <response
+                        status="500"
+                        description="Internal server error"/>
+
+                </responses>
+
+            </endpoint>
+
+
+            <endpoint
+                id="create-user"
+                method="POST"
+                path="/">
+
+                <description>
+                    Creates a new user account.
+                </description>
+
+                <request>
+
+                    <header
+                        name="Content-Type"
+                        value="application/json"/>
+
+                    <body>
+                        <![CDATA[
+                        {
+                            "email": "newuser@example.com",
+                            "password": "secure-password",
+                            "name": "Example User"
+                        }
+                        ]]>
+                    </body>
+
+                </request>
+
+                <responses>
+
+                    <response
+                        status="201"
+                        description="User created"/>
+
+                    <response
+                        status="400"
+                        description="Invalid request"/>
+
+                    <response
+                        status="409"
+                        description="User already exists"/>
+
+                </responses>
+
+            </endpoint>
+
+        </api>
+
+    </section>
+
+
+    <!-- ========================================================= -->
+    <!-- SECURITY                                                  -->
+    <!-- ========================================================= -->
+
+    <section
+        id="security"
+        type="security"
+        classification="restricted">
+
+        <title>
+            Security Architecture
+        </title>
+
+        <paragraph>
+            Security controls are implemented across application,
+            infrastructure, network, identity, and data layers.
+        </paragraph>
+
+
+        <security-controls>
+
+            <control
+                id="SEC-001"
+                category="authentication"
+                severity="critical">
+
+                <name>
+                    Multi-Factor Authentication
+                </name>
+
+                <description>
+                    Administrative users must authenticate using at least
+                    two independent authentication factors.
+                </description>
+
+                <implementation>
+                    TOTP
+                </implementation>
+
+            </control>
+
+
+            <control
+                id="SEC-002"
+                category="authorization"
+                severity="high">
+
+                <name>
+                    Role Based Access Control
+                </name>
+
+                <description>
+                    Access to protected resources is determined by the
+                    authenticated user's assigned roles.
+                </description>
+
+                <roles>
+
+                    <role id="administrator">
+
+                        <permission>
+                            system.read
+                        </permission>
+
+                        <permission>
+                            system.write
+                        </permission>
+
+                        <permission>
+                            user.manage
+                        </permission>
+
+                    </role>
+
+
+                    <role id="developer">
+
+                        <permission>
+                            system.read
+                        </permission>
+
+                        <permission>
+                            deployment.create
+                        </permission>
+
+                    </role>
+
+
+                    <role id="viewer">
+
+                        <permission>
+                            system.read
+                        </permission>
+
+                    </role>
+
+                </roles>
+
+            </control>
+
+
+            <control
+                id="SEC-003"
+                category="encryption"
+                severity="high">
+
+                <name>
+                    Data Encryption
+                </name>
+
+                <description>
+                    Sensitive data must be encrypted both during transport
+                    and while stored.
+                </description>
+
+                <transport>
+                    TLS 1.3
+                </transport>
+
+                <storage>
+                    AES-256
+                </storage>
+
+            </control>
+
+        </security-controls>
+
+    </section>
+
+
+    <!-- ========================================================= -->
+    <!-- DEPLOYMENT                                                -->
+    <!-- ========================================================= -->
+
+    <section
+        id="deployment"
+        type="operations">
+
+        <title>
+            Deployment Architecture
+        </title>
+
+        <environment
+            name="development"
+            region="local">
+
+            <service
+                name="api"
+                replicas="1"
+                image="example/api:latest"/>
+
+            <service
+                name="frontend"
+                replicas="1"
+                image="example/frontend:latest"/>
+
+            <service
+                name="postgres"
+                replicas="1"
+                image="postgres:16"/>
+
+        </environment>
+
+
+        <environment
+            name="staging"
+            region="ap-south-1">
+
+            <service
+                name="api"
+                replicas="3"
+                image="example/api:3.4.0"/>
+
+            <service
+                name="frontend"
+                replicas="2"
+                image="example/frontend:3.4.0"/>
+
+            <service
+                name="worker"
+                replicas="2"
+                image="example/worker:3.4.0"/>
+
+        </environment>
+
+
+        <environment
+            name="production"
+            region="ap-south-1">
+
+            <service
+                name="api"
+                replicas="10"
+                image="example/api:3.4.0"/>
+
+            <service
+                name="frontend"
+                replicas="6"
+                image="example/frontend:3.4.0"/>
+
+            <service
+                name="worker"
+                replicas="8"
+                image="example/worker:3.4.0"/>
+
+            <service
+                name="notification"
+                replicas="4"
+                image="example/notification:2.7.0"/>
+
+        </environment>
+
+    </section>
+
+
+    <!-- ========================================================= -->
+    <!-- MONITORING                                                -->
+    <!-- ========================================================= -->
+
+    <section
+        id="observability"
+        type="operations">
+
+        <title>
+            Monitoring and Observability
+        </title>
+
+        <paragraph>
+            Production services expose metrics, structured logs, and
+            distributed traces.
+        </paragraph>
+
+
+        <monitoring>
+
+            <metric
+                name="http_request_duration_seconds"
+                type="histogram">
+
+                <description>
+                    Measures HTTP request latency.
+                </description>
+
+                <labels>
+
+                    <label>
+                        service
+                    </label>
+
+                    <label>
+                        endpoint
+                    </label>
+
+                    <label>
+                        status_code
+                    </label>
+
+                </labels>
+
+            </metric>
+
+
+            <metric
+                name="http_requests_total"
+                type="counter">
+
+                <description>
+                    Total number of HTTP requests received.
+                </description>
+
+            </metric>
+
+
+            <alert
+                id="ALERT-001"
+                severity="critical">
+
+                <condition>
+                    http_request_duration_seconds.p95 &gt; 2
+                </condition>
+
+                <duration>
+                    5m
+                </duration>
+
+                <action>
+                    Notify on-call engineering team.
+                </action>
+
+            </alert>
+
+
+            <alert
+                id="ALERT-002"
+                severity="warning">
+
+                <condition>
+                    http_requests_total.error_rate &gt; 0.05
+                </condition>
+
+                <duration>
+                    10m
+                </duration>
+
+                <action>
+                    Create operational incident.
+                </action>
+
+            </alert>
+
+        </monitoring>
+
+    </section>
+
+
+    <!-- ========================================================= -->
+    <!-- RELEASE MANAGEMENT                                        -->
+    <!-- ========================================================= -->
+
+    <section
+        id="release-management"
+        type="process">
+
+        <title>
+            Release Management
+        </title>
+
+        <release
+            version="3.4.0"
+            status="planned"
+            target-date="2026-10-15">
+
+            <summary>
+                Introduces improved authorization, API performance,
+                monitoring capabilities, and database optimizations.
+            </summary>
+
+
+            <features>
+
+                <feature
+                    id="FEATURE-001"
+                    priority="high">
+
+                    <name>
+                        Authorization Improvements
+                    </name>
+
+                    <description>
+                        Introduce fine-grained permissions for administrative
+                        operations.
+                    </description>
+
+                </feature>
+
+
+                <feature
+                    id="FEATURE-002"
+                    priority="medium">
+
+                    <name>
+                        API Performance
+                    </name>
+
+                    <description>
+                        Reduce average API response time through caching
+                        and database query optimization.
+                    </description>
+
+                </feature>
+
+
+                <feature
+                    id="FEATURE-003"
+                    priority="medium">
+
+                    <name>
+                        Improved Observability
+                    </name>
+
+                    <description>
+                        Add distributed tracing to asynchronous workflows.
+                    </description>
+
+                </feature>
+
+            </features>
+
+
+            <risks>
+
+                <risk
+                    id="RISK-001"
+                    probability="medium"
+                    impact="high">
+
+                    <description>
+                        Database migration may increase deployment duration.
+                    </description>
+
+                    <mitigation>
+                        Perform migration in a separate controlled deployment
+                        step and validate rollback procedures.
+                    </mitigation>
+
+                </risk>
+
+
+                <risk
+                    id="RISK-002"
+                    probability="low"
+                    impact="critical">
+
+                    <description>
+                        Incorrect authorization configuration could prevent
+                        legitimate administrative access.
+                    </description>
+
+                    <mitigation>
+                        Execute automated authorization regression tests
+                        before production deployment.
+                    </mitigation>
+
+                </risk>
+
+            </risks>
+
+        </release>
+
+    </section>
+
+
+    <!-- ========================================================= -->
+    <!-- REFERENCES                                                -->
+    <!-- ========================================================= -->
+
+    <references>
+
+        <reference
+            id="REF-001"
+            type="web"
+            xlink:href="https://www.w3.org/XML/">
+
+            <title>
+                W3C XML Specification
+            </title>
+
+            <description>
+                Official XML standards and specifications.
+            </description>
+
+        </reference>
+
+
+        <reference
+            id="REF-002"
+            type="web"
+            xlink:href="https://www.w3.org/TR/xmlschema11-1/">
+
+            <title>
+                W3C XML Schema
+            </title>
+
+            <description>
+                XML Schema specification and validation model.
+            </description>
+
+        </reference>
+
+
+        <reference
+            id="REF-003"
+            type="internal">
+
+            <title>
+                Enterprise Architecture Guidelines
+            </title>
+
+            <description>
+                Internal architectural guidelines maintained by the
+                platform engineering organization.
+            </description>
+
+        </reference>
+
+    </references>
+
+
+    <!-- ========================================================= -->
+    <!-- APPENDIX                                                  -->
+    <!-- ========================================================= -->
+
+    <appendix id="appendix-a">
+
+        <title>
+            Technical Appendix
+        </title>
+
+        <section id="xml-example">
+
+            <title>
+                XML Example
+            </title>
+
+            <paragraph>
+                The following example demonstrates escaped XML characters.
+            </paragraph>
+
+            <code language="xml"><![CDATA[
+                <example>
+                    <value>
+                        x < y && y > z
+                    </value>
+                </example>
+            ]]></code>
+
+        </section>
+
+
+        <section id="special-characters">
+
+            <title>
+                Special Characters
+            </title>
+
+            <paragraph>
+                XML requires characters such as &lt;, &gt;, and &amp;
+                to be represented using escaped entities when they occur
+                as ordinary text.
+            </paragraph>
+
+            <example
+                value="Tom &amp; Jerry"
+                expression="x &lt; y"
+                comparison="a &gt; b"/>
+
+        </section>
+
+
+        <section id="deep-nesting">
+
+            <title>
+                Deeply Nested Structure
+            </title>
+
+            <level-1 id="L1">
+
+                <level-2 id="L2">
+
+                    <level-3 id="L3">
+
+                        <level-4 id="L4">
+
+                            <level-5 id="L5">
+
+                                <level-6 id="L6">
+
+                                    <level-7 id="L7">
+
+                                        <level-8 id="L8">
+
+                                            <value>
+                                                Deeply nested XML content
+                                            </value>
+
+                                        </level-8>
+
+                                    </level-7>
+
+                                </level-6>
+
+                            </level-5>
+
+                        </level-4>
+
+                    </level-3>
+
+                </level-2>
+
+            </level-1>
+
+        </section>
+
+    </appendix>
+
+
+    <!-- ========================================================= -->
+    <!-- FOOTER                                                    -->
+    <!-- ========================================================= -->
+
+    <footer>
+
+        <copyright
+            year="2026"
+            owner="Example Technologies">
+            Copyright 2026 Example Technologies. All rights reserved.
+        </copyright>
+
+        <contact>
+
+            <email>
+                engineering@example.com
+            </email>
+
+            <website>
+                https://www.example.com
+            </website>
+
+        </contact>
+
+    </footer>
+
+</document>
