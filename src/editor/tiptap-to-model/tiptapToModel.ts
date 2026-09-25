@@ -38,11 +38,17 @@ function convertNode(json: JSONContent, pmToTag: Map<string, string>): XmlNode |
       marks: otherMarks.length > 0 ? otherMarks : undefined,
     };
 
-    if (linkMark && linkMark.attrs?.href) {
+    if (linkMark && (linkMark.attrs?.href || linkMark.attrs?.xmlAttrs?.href)) {
+      const origAttrs = (linkMark.attrs?.xmlAttrs as Record<string, string>) || {};
+      const href = linkMark.attrs?.href || origAttrs.href || '';
       return {
         type: 'element',
         tag: 'link',
-        attrs: { href: linkMark.attrs.href },
+        attrs: {
+          ...origAttrs,
+          ...(href ? { href } : {}),
+          ...(linkMark.attrs?.target ? { target: linkMark.attrs.target } : {}),
+        },
         children: [textNode],
       };
     }
@@ -55,19 +61,29 @@ function convertNode(json: JSONContent, pmToTag: Map<string, string>): XmlNode |
   // Reverse map: pmName → original xmlTag
   let xmlTag = pmToTag.get(json.type) ?? json.type;
 
-  const attrs: Record<string, string> = {
-    ...((json.attrs?.xmlAttrs as Record<string, string>) ?? {}),
-  };
+  const rawAttrs = (json.attrs?.xmlAttrs as Record<string, string>) ?? {};
+  const attrs: Record<string, string> = { ...rawAttrs };
 
-  if (json.type === 'heading' && json.attrs?.level) {
-    attrs.level = String(json.attrs.level);
+  if (json.type === 'heading') {
+    const hadLevelAttr = rawAttrs._hadLevelAttr === 'true';
+    if (hadLevelAttr && json.attrs?.level) {
+      attrs.level = String(json.attrs.level);
+    } else if (json.attrs?.level && json.attrs.level !== 1) {
+      attrs.level = String(json.attrs.level);
+    } else {
+      delete attrs.level;
+    }
   }
+
+  delete attrs._synthetic;
+  delete attrs._hadLevelAttr;
 
   let children: XmlNode[] = [];
   if (json.content) {
     for (const child of json.content) {
-      // If this is a listItem whose only child is a synthetic paragraph, unwrap it for clean XML
-      if (json.type === 'listItem' && child.type === 'paragraph' && json.content.length === 1) {
+      // If this is a listItem whose only child is a synthetic paragraph, unwrap it
+      const isSyntheticPara = child.type === 'paragraph' && child.attrs?.xmlAttrs?._synthetic === 'true';
+      if (json.type === 'listItem' && isSyntheticPara && json.content.length === 1) {
         if (child.content) {
           for (const inner of child.content) {
             const converted = convertNode(inner, pmToTag);

@@ -40,7 +40,14 @@ function convertNode(node: XmlNode, tagToPm: Map<string, string>): JSONContent |
     return {
       type: 'text',
       text,
-      marks: [{ type: 'link', attrs: { href } }],
+      marks: [{
+        type: 'link',
+        attrs: {
+          href,
+          ...(node.attrs?.target ? { target: node.attrs.target } : {}),
+          xmlAttrs: node.attrs || {},
+        },
+      }],
     };
   }
 
@@ -54,9 +61,13 @@ function convertElement(node: XmlElement, tagToPm: Map<string, string>): JSONCon
 
   if (pmName === 'heading') {
     const rawLevel = Number(node.attrs?.level || (node.tag.toLowerCase() === 'h2' ? 2 : node.tag.toLowerCase() === 'h3' ? 3 : 1));
+    const hadLevelAttr = Boolean(node.attrs && 'level' in node.attrs);
     result.attrs = {
       level: Math.min(Math.max(rawLevel, 1), 3),
-      ...(node.attrs ? { xmlAttrs: node.attrs } : {}),
+      xmlAttrs: {
+        ...(node.attrs || {}),
+        _hadLevelAttr: hadLevelAttr ? 'true' : 'false',
+      },
     };
   } else if (node.attrs && Object.keys(node.attrs).length > 0) {
     result.attrs = { xmlAttrs: node.attrs };
@@ -66,9 +77,11 @@ function convertElement(node: XmlElement, tagToPm: Map<string, string>): JSONCon
     .map(c => convertNode(c, tagToPm))
     .filter((c): c is JSONContent => c !== null);
 
-  // If this is a listItem and children are text nodes, wrap in a paragraph to satisfy Tiptap's listItem schema
+  // If this is a listItem and children are direct text nodes, wrap in a synthetic paragraph
+  // so Tiptap's listItem schema (content: 'paragraph block*') is satisfied without losing the fact
+  // that the original XML had direct text.
   if (pmName === 'listItem' && children.some(c => c.type === 'text')) {
-    children = [{ type: 'paragraph', content: children }];
+    children = [{ type: 'paragraph', attrs: { xmlAttrs: { _synthetic: 'true' } }, content: children }];
   }
 
   if (children.length > 0) {
